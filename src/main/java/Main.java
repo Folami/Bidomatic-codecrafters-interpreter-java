@@ -46,7 +46,7 @@ public class Main {
           default -> {
             // Optionally handle unsupported characters
             System.err.println("[line 1] Error: Unexpected character: " + ch);
-            // syntaxError = true;
+            System.exit(65);
           }
         }
       }
