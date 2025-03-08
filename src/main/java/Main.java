@@ -43,6 +43,7 @@ public class Main {
           case ',' -> System.out.println("COMMA , null");
           case '.' -> System.out.println("DOT . null");
           case ';' -> System.out.println("SEMICOLON ; null");
+          case ' ', '\r', '\t', '\n' -> {} // Ignore whitespace
           default -> {
             // Handle unsupported characters
             System.err.println("[line 1] Error: Unexpected character: " + ch);
@@ -50,8 +51,10 @@ public class Main {
           }
         }
       }
-      System.out.println("EOF  null");
     }
+
+    // Print EOF token regardless of file contents
+    System.out.println("EOF  null");
 
     if (hasError) {
       System.exit(65);
