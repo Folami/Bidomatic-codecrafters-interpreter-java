@@ -33,16 +33,20 @@ public class Main {
     if (fileContents.length() > 0) {
       for (char ch : fileContents.toCharArray()) {
         switch (ch) {
-          case '(': System.out.println("LEFT_PAREN ( null");
-          case ')': System.out.println("RIGHT_PAREN ) null");
-          case '{': System.out.println("LEFT_BRACE { null");
-          case '}': System.out.println("RIGHT_BRACE } null");
-          case ',': System.out.println("COMMA , null");
-          case '.': System.out.println("DOT . null");
-          case '-': System.out.println("MINUS - null");
-          case '+': System.out.println("PLUS + null");
-          case ';': System.out.println("SEMICOLON ; null");
-          case '*': System.out.println("STAR * null"); 
+          case '(' -> System.out.println("LEFT_PAREN ( null");
+          case ')' -> System.out.println("RIGHT_PAREN ) null");
+          case '{' -> System.out.println("LEFT_BRACE { null");
+          case '}' -> System.out.println("RIGHT_BRACE } null");
+          case '*' -> System.out.println("STAR * null");
+          case '+' -> System.out.println("PLUS + null");
+          case '-' -> System.out.println("MINUS - null");
+          case ',' -> System.out.println("COMMA , null");
+          case '.' -> System.out.println("DOT . null");
+          case ';' -> System.out.println("SEMICOLON ; null"); // Added case
+          default -> {
+            // Optionally handle unsupported characters
+            System.err.println("Unrecognized character: " + ch);
+          }
         }
       }
     } 
