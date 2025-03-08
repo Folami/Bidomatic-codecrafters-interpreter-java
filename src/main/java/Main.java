@@ -45,7 +45,7 @@ public class Main {
           case ';' -> System.out.println("SEMICOLON ; null"); // Added case
           default -> {
             // Optionally handle unsupported characters
-            System.err.println("[line 1] Error: Unexpected character: " + token);
+            System.err.println("[line 1] Error: Unexpected character: " + ch);
             // syntaxError = true;
           }
         }
