@@ -28,8 +28,8 @@ public class Main {
       System.exit(1);
     }
 
-    // Uncomment this block to pass the first stage
-    // 
+    boolean hasError = false;
+
     if (fileContents.length() > 0) {
       for (char ch : fileContents.toCharArray()) {
         switch (ch) {
@@ -42,15 +42,21 @@ public class Main {
           case '-' -> System.out.println("MINUS - null");
           case ',' -> System.out.println("COMMA , null");
           case '.' -> System.out.println("DOT . null");
-          case ';' -> System.out.println("SEMICOLON ; null"); // Added case
+          case ';' -> System.out.println("SEMICOLON ; null");
           default -> {
-            // Optionally handle unsupported characters
+            // Handle unsupported characters
             System.err.println("[line 1] Error: Unexpected character: " + ch);
+            hasError = true;
           }
         }
       }
       System.out.println("EOF  null");
+    }
+
+    if (hasError) {
       System.exit(65);
+    } else {
+      System.exit(0);
     }
   }
 }
