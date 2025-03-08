@@ -60,6 +60,22 @@ public class Main {
               System.out.println("BANG ! null");
             }
           }
+          case '<' -> {
+            if (i + 1 < fileContents.length() && fileContents.charAt(i + 1) == '=') {
+              System.out.println("LESS_EQUAL <= null");
+              i++; // Skip the next character
+            } else {
+              System.out.println("LESS < null");
+            }
+          }
+          case '>' -> {
+            if (i + 1 < fileContents.length() && fileContents.charAt(i + 1) == '=') {
+              System.out.println("GREATER_EQUAL >= null");
+              i++; // Skip the next character
+            } else {
+              System.out.println("GREATER > null");
+            }
+          }
           case ' ', '\r', '\t', '\n' -> {} // Ignore whitespace
           default -> {
             // Handle unsupported characters
