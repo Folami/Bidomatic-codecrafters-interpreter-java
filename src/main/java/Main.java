@@ -36,9 +36,9 @@ public class Main {
           System.out.println("LEFT_PAREN ( null");
         } else if (ch == ')') {
           System.out.println("RIGHT_PAREN ) null");
-        } else if (c == '{') {
+        } else if (ch == '{') {
           System.out.println("LEFT_BRACE { null");
-        } else if (c == '}') {
+        } else if (ch == '}') {
           System.out.println("RIGHT_BRACE } null");
         }
       }
