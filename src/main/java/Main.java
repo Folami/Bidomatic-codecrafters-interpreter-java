@@ -3,177 +3,88 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class Main {
-  public static void main(String[] args) {
-    if (args.length < 2) {
-      System.err.println("Usage: ./your_program.sh tokenize <filename>");
-      System.exit(1);
-    }
+    public static void main(String[] args) {
+        System.err.println("Logs from your program will appear here!");
 
-    String command = args[0];
-    String filename = args[1];
-
-    if (!command.equals("tokenize")) {
-      System.err.println("Unknown command: " + command);
-      System.exit(1);
-    }
-
-    String fileContents = "";
-    try {
-      fileContents = Files.readString(Path.of(filename));
-    } catch (IOException e) {
-      System.err.println("Error reading file: " + e.getMessage());
-      System.exit(1);
-    }
-
-    boolean hasError = false;
-    int lineNumber = 1;
-
-    if (fileContents.length() > 0) {
-      for (int i = 0; i < fileContents.length(); i++) {
-        char ch = fileContents.charAt(i);
-        
-        // Handle string literals
-        if (ch == '"') {
-          StringBuilder string = new StringBuilder();
-          i++;
-          boolean isUnterminated = true;
-          
-          while (i < fileContents.length()) {
-            char c = fileContents.charAt(i);
-            if (c == '"') {
-              isUnterminated = false;
-              break;
-            }
-            if (c == '\n') lineNumber++;
-            string.append(c);
-            i++;
-          }
-          
-          if (isUnterminated) {
-            System.err.println("[line " + lineNumber + "] Error: Unterminated string");
-            hasError = true;
-            break;
-          }
-          
-          System.out.println("STRING \"" + string + "\" " + string);
-          continue;
-        }
-        
-        // Handle number literals
-        if (Character.isDigit(ch)) {
-          StringBuilder number = new StringBuilder();
-          boolean hasDecimalPoint = false;
-          
-          while (i < fileContents.length()) {
-            char c = fileContents.charAt(i);
-            if (c == '.' && !hasDecimalPoint && i + 1 < fileContents.length() 
-                && Character.isDigit(fileContents.charAt(i + 1))) {
-              hasDecimalPoint = true;
-              number.append(c);
-            } else if (Character.isDigit(c)) {
-              number.append(c);
-            } else {
-              i--;
-              break;
-            }
-            i++;
-          }
-          System.out.println("NUMBER " + number + " " + number);
-          continue;
-        }
-        
-        // Handle identifiers
-        if (Character.isLetter(ch) || ch == '_') {
-          StringBuilder identifier = new StringBuilder();
-          
-          while (i < fileContents.length()) {
-            char c = fileContents.charAt(i);
-            if (Character.isLetterOrDigit(c) || c == '_') {
-              identifier.append(c);
-            } else {
-              i--;
-              break;
-            }
-            i++;
-          }
-          System.out.println("IDENTIFIER " + identifier + " null");
-          continue;
+        if (args.length < 2) {
+            System.err.println("Usage: ./your_program.sh tokenize <filename>");
+            System.exit(1);
         }
 
-        switch (ch) {
-          case '(' -> System.out.println("LEFT_PAREN ( null");
-          case ')' -> System.out.println("RIGHT_PAREN ) null");
-          case '{' -> System.out.println("LEFT_BRACE { null");
-          case '}' -> System.out.println("RIGHT_BRACE } null");
-          case '*' -> System.out.println("STAR * null");
-          case '+' -> System.out.println("PLUS + null");
-          case '-' -> System.out.println("MINUS - null");
-          case ',' -> System.out.println("COMMA , null");
-          case '.' -> System.out.println("DOT . null");
-          case ';' -> System.out.println("SEMICOLON ; null");
-          case '=' -> {
-            if (i + 1 < fileContents.length() && fileContents.charAt(i + 1) == '=') {
-              System.out.println("EQUAL_EQUAL == null");
-              i++;
-            } else {
-              System.out.println("EQUAL = null");
-            }
-          }
-          case '!' -> {
-            if (i + 1 < fileContents.length() && fileContents.charAt(i + 1) == '=') {
-              System.out.println("BANG_EQUAL != null");
-              i++;
-            } else {
-              System.out.println("BANG ! null");
-            }
-          }
-          case '<' -> {
-            if (i + 1 < fileContents.length() && fileContents.charAt(i + 1) == '=') {
-              System.out.println("LESS_EQUAL <= null");
-              i++;
-            } else {
-              System.out.println("LESS < null");
-            }
-          }
-          case '>' -> {
-            if (i + 1 < fileContents.length() && fileContents.charAt(i + 1) == '=') {
-              System.out.println("GREATER_EQUAL >= null");
-              i++;
-            } else {
-              System.out.println("GREATER > null");
-            }
-          }
-          case '/' -> {
-            if (i + 1 < fileContents.length() && fileContents.charAt(i + 1) == '/') {
-              while (i < fileContents.length() && fileContents.charAt(i) != '\n') {
-                i++;
-              }
-              i--; // Adjust for the upcoming increment
-            } else {
-              System.out.println("SLASH / null");
-            }
-          }
-          case ' ' -> {} // Ignore spaces
-          case '\r' -> {} // Ignore carriage returns
-          case '\t' -> System.out.println("TAB \\t null");
-          case '\n' -> {
-            System.out.println("NEWLINE \\n null");
-            lineNumber++;
-          }
-          default -> {
-            if (!Character.isWhitespace(ch)) {
-              System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
-              hasError = true;
-            }
-          }
+        String command = args[0];
+        String filename = args[1];
+
+        if (!command.equals("tokenize")) {
+            System.err.println("Unknown command: " + command);
+            System.exit(1);
         }
-      }
+
+        String fileContents = "";
+        try {
+            fileContents = Files.readString(Path.of(filename));
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+            System.exit(1);
+        }
+
+        boolean hasError = false;
+        int lineNumber = 1; // Initialize line number
+        int index = 0;
+        while(index < fileContents.length()) {
+            char ch = fileContents.charAt(index);
+            switch (ch) {
+                case '(':
+                    System.out.println("LEFT_PAREN ( null");
+                    break;
+                case ')':
+                    System.out.println("RIGHT_PAREN ) null");
+                    break;
+                case '{':
+                    System.out.println("LEFT_BRACE { null");
+                    break;
+                case '}':
+                    System.out.println("RIGHT_BRACE } null");
+                    break;
+                case '*':
+                    System.out.println("STAR * null");
+                    break;
+                case '+':
+                    System.out.println("PLUS + null");
+                    break;
+                case '-':
+                    System.out.println("MINUS - null");
+                    break;
+                case ',':
+                    System.out.println("COMMA , null");
+                    break;
+                case '.':
+                    System.out.println("DOT . null");
+                    break;
+                case ';':
+                    System.out.println("SEMICOLON ; null");
+                    break;
+                case '\n':
+                    lineNumber++; // Increment line number on newline
+                    break;
+                case ' ':
+                case '\t':
+                case '\r':
+                    //Ignore whitespace;
+                    break;
+                default:
+                    // Handle unsupported characters
+                    System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
+                    hasError = true;
+                    break;
+            }
+            index++;
+        }
+        System.out.println("EOF  null");
+
+        if (hasError) {
+            System.exit(65);
+        } else {
+            System.exit(0);
+        }
     }
-    System.out.println("EOF  null");
-    if (hasError) {
-      System.exit(65);
-    } else {
-      System.exit(0);
-    }
-  }
 }
