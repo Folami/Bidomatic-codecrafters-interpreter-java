@@ -51,8 +51,7 @@ public class Main {
           
           if (isUnterminated) {
             System.err.println("[line " + lineNumber + "] Error: Unterminated string");
-            hasError = true;
-            break;
+            System.exit(65);
           }
           
           System.out.println("STRING \"" + string + "\" " + string);
@@ -153,17 +152,13 @@ public class Main {
               System.out.println("SLASH / null");
             }
           }
-          case ' ' -> System.out.println("SPACE ' ' null");
-          case '\r' -> System.out.println("CARRIAGE_RETURN \\r null");
-          case '\t' -> System.out.println("TAB \\t null");
-          case '\n' -> {
-            System.out.println("NEWLINE \\n null");
-            lineNumber++;
+          case ' ', '\r', '\t', '\n' -> {
+            if (ch == '\n') lineNumber++;
           }
           default -> {
             if (!Character.isWhitespace(ch)) {
               System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
-              hasError = true;
+              System.exit(65);
             }
           }
         }
@@ -171,11 +166,6 @@ public class Main {
     }
 
     System.out.println("EOF  null");
-
-    if (hasError) {
-      System.exit(65);
-    } else {
-      System.exit(0);
-    }
+    System.exit(0);
   }
 }
