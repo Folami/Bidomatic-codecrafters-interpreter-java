@@ -31,7 +31,8 @@ public class Main {
     boolean hasError = false;
 
     if (fileContents.length() > 0) {
-      for (char ch : fileContents.toCharArray()) {
+      for (int i = 0; i < fileContents.length(); i++) {
+        char ch = fileContents.charAt(i);
         switch (ch) {
           case '(' -> System.out.println("LEFT_PAREN ( null");
           case ')' -> System.out.println("RIGHT_PAREN ) null");
@@ -43,6 +44,22 @@ public class Main {
           case ',' -> System.out.println("COMMA , null");
           case '.' -> System.out.println("DOT . null");
           case ';' -> System.out.println("SEMICOLON ; null");
+          case '=' -> {
+            if (i + 1 < fileContents.length() && fileContents.charAt(i + 1) == '=') {
+              System.out.println("EQUAL_EQUAL == null");
+              i++; // Skip the next character
+            } else {
+              System.out.println("EQUAL = null");
+            }
+          }
+          case '!' -> {
+            if (i + 1 < fileContents.length() && fileContents.charAt(i + 1) == '=') {
+              System.out.println("BANG_EQUAL != null");
+              i++; // Skip the next character
+            } else {
+              System.out.println("BANG ! null");
+            }
+          }
           case ' ', '\r', '\t', '\n' -> {} // Ignore whitespace
           default -> {
             // Handle unsupported characters
