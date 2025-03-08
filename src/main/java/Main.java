@@ -4,9 +4,6 @@ import java.nio.file.Path;
 
 public class Main {
   public static void main(String[] args) {
-    // You can use print statements as follows for debugging, they'll be visible when running tests.
-    System.err.println("Logs from your program will appear here!");
-
     if (args.length < 2) {
       System.err.println("Usage: ./your_program.sh tokenize <filename>");
       System.exit(1);
@@ -34,6 +31,75 @@ public class Main {
     if (fileContents.length() > 0) {
       for (int i = 0; i < fileContents.length(); i++) {
         char ch = fileContents.charAt(i);
+        
+        // Handle string literals
+        if (ch == '"') {
+          StringBuilder string = new StringBuilder();
+          i++;
+          boolean isUnterminated = true;
+          
+          while (i < fileContents.length()) {
+            char c = fileContents.charAt(i);
+            if (c == '"') {
+              isUnterminated = false;
+              break;
+            }
+            if (c == '\n') lineNumber++;
+            string.append(c);
+            i++;
+          }
+          
+          if (isUnterminated) {
+            System.err.println("[line " + lineNumber + "] Error: Unterminated string");
+            hasError = true;
+            break;
+          }
+          
+          System.out.println("STRING \"" + string + "\" " + string);
+          continue;
+        }
+        
+        // Handle number literals
+        if (Character.isDigit(ch)) {
+          StringBuilder number = new StringBuilder();
+          boolean hasDecimalPoint = false;
+          
+          while (i < fileContents.length()) {
+            char c = fileContents.charAt(i);
+            if (c == '.' && !hasDecimalPoint && i + 1 < fileContents.length() 
+                && Character.isDigit(fileContents.charAt(i + 1))) {
+              hasDecimalPoint = true;
+              number.append(c);
+            } else if (Character.isDigit(c)) {
+              number.append(c);
+            } else {
+              i--;
+              break;
+            }
+            i++;
+          }
+          System.out.println("NUMBER " + number + " " + number);
+          continue;
+        }
+        
+        // Handle identifiers
+        if (Character.isLetter(ch) || ch == '_') {
+          StringBuilder identifier = new StringBuilder();
+          
+          while (i < fileContents.length()) {
+            char c = fileContents.charAt(i);
+            if (Character.isLetterOrDigit(c) || c == '_') {
+              identifier.append(c);
+            } else {
+              i--;
+              break;
+            }
+            i++;
+          }
+          System.out.println("IDENTIFIER " + identifier + " null");
+          continue;
+        }
+
         switch (ch) {
           case '(' -> System.out.println("LEFT_PAREN ( null");
           case ')' -> System.out.println("RIGHT_PAREN ) null");
@@ -48,7 +114,7 @@ public class Main {
           case '=' -> {
             if (i + 1 < fileContents.length() && fileContents.charAt(i + 1) == '=') {
               System.out.println("EQUAL_EQUAL == null");
-              i++; // Skip the next character
+              i++;
             } else {
               System.out.println("EQUAL = null");
             }
@@ -56,7 +122,7 @@ public class Main {
           case '!' -> {
             if (i + 1 < fileContents.length() && fileContents.charAt(i + 1) == '=') {
               System.out.println("BANG_EQUAL != null");
-              i++; // Skip the next character
+              i++;
             } else {
               System.out.println("BANG ! null");
             }
@@ -64,7 +130,7 @@ public class Main {
           case '<' -> {
             if (i + 1 < fileContents.length() && fileContents.charAt(i + 1) == '=') {
               System.out.println("LESS_EQUAL <= null");
-              i++; // Skip the next character
+              i++;
             } else {
               System.out.println("LESS < null");
             }
@@ -72,17 +138,17 @@ public class Main {
           case '>' -> {
             if (i + 1 < fileContents.length() && fileContents.charAt(i + 1) == '=') {
               System.out.println("GREATER_EQUAL >= null");
-              i++; // Skip the next character
+              i++;
             } else {
               System.out.println("GREATER > null");
             }
           }
           case '/' -> {
             if (i + 1 < fileContents.length() && fileContents.charAt(i + 1) == '/') {
-              // Skip the rest of the line for comments
               while (i < fileContents.length() && fileContents.charAt(i) != '\n') {
                 i++;
               }
+              i--; // Adjust for the upcoming increment
             } else {
               System.out.println("SLASH / null");
             }
@@ -95,15 +161,15 @@ public class Main {
             lineNumber++;
           }
           default -> {
-            // Handle unsupported characters
-            System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
-            hasError = true;
+            if (!Character.isWhitespace(ch)) {
+              System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
+              hasError = true;
+            }
           }
         }
       }
     }
 
-    // Print EOF token regardless of file contents
     System.out.println("EOF  null");
 
     if (hasError) {
