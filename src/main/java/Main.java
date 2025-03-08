@@ -32,17 +32,26 @@ public class Main {
     // 
     if (fileContents.length() > 0) {
       for (char ch : fileContents.toCharArray()) {
-        switch (ch) {
-          case '(': addToken(LEFT_PAREN); break;
-          case ')': addToken(RIGHT_PAREN); break;
-          case '{': addToken(LEFT_BRACE); break;
-          case '}': addToken(RIGHT_BRACE); break;
-          case ',': addToken(COMMA); break;
-          case '.': addToken(DOT); break;
-          case '-': addToken(MINUS); break;
-          case '+': addToken(PLUS); break;
-          case ';': addToken(SEMICOLON); break;
-          case '*': addToken(STAR); break; 
+        if (ch == '(') {
+          System.out.println("LEFT_PAREN ( null");
+        } else if (ch == ')') {
+          System.out.println("RIGHT_PAREN ) null");
+        } else if (ch == '{') {
+          System.out.println("LEFT_BRACE { null");
+        } else if (ch == '}') {
+          System.out.println("RIGHT_BRACE } null");
+        }
+        switch (c) {
+          case '(': System.out.println("LEFT_PAREN ( null");
+          case ')': System.out.println("RIGHT_PAREN ) null");
+          case '{': System.out.println("LEFT_BRACE { null");
+          case '}': System.out.println("RIGHT_BRACE } null");
+          case ',': System.out.println("COMMA , null");
+          case '.': System.out.println("DOT . null");
+          case '-': System.out.println("MINUS - null");
+          case '+': System.out.println("PLUS + null");
+          case ';': System.out.println("SEMICOLON ; null");
+          case '*': System.out.println("STAR * null"); 
         }
       }
     } 
