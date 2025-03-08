@@ -32,14 +32,17 @@ public class Main {
     // 
     if (fileContents.length() > 0) {
       for (char ch : fileContents.toCharArray()) {
-        if (ch == '(') {
-          System.out.println("LEFT_PAREN ( null");
-        } else if (ch == ')') {
-          System.out.println("RIGHT_PAREN ) null");
-        } else if (ch == '{') {
-          System.out.println("LEFT_BRACE { null");
-        } else if (ch == '}') {
-          System.out.println("RIGHT_BRACE } null");
+        switch (ch) {
+          case '(': addToken(LEFT_PAREN); break;
+          case ')': addToken(RIGHT_PAREN); break;
+          case '{': addToken(LEFT_BRACE); break;
+          case '}': addToken(RIGHT_BRACE); break;
+          case ',': addToken(COMMA); break;
+          case '.': addToken(DOT); break;
+          case '-': addToken(MINUS); break;
+          case '+': addToken(PLUS); break;
+          case ';': addToken(SEMICOLON); break;
+          case '*': addToken(STAR); break; 
         }
       }
     } 
