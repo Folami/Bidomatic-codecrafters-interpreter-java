@@ -32,16 +32,7 @@ public class Main {
     // 
     if (fileContents.length() > 0) {
       for (char ch : fileContents.toCharArray()) {
-        if (ch == '(') {
-          System.out.println("LEFT_PAREN ( null");
-        } else if (ch == ')') {
-          System.out.println("RIGHT_PAREN ) null");
-        } else if (ch == '{') {
-          System.out.println("LEFT_BRACE { null");
-        } else if (ch == '}') {
-          System.out.println("RIGHT_BRACE } null");
-        }
-        switch (c) {
+        switch (ch) {
           case '(': System.out.println("LEFT_PAREN ( null");
           case ')': System.out.println("RIGHT_PAREN ) null");
           case '{': System.out.println("LEFT_BRACE { null");
