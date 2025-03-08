@@ -29,6 +29,7 @@ public class Main {
     }
 
     boolean hasError = false;
+    int lineNumber = 1;
 
     if (fileContents.length() > 0) {
       for (int i = 0; i < fileContents.length(); i++) {
@@ -86,10 +87,16 @@ public class Main {
               System.out.println("SLASH / null");
             }
           }
-          case ' ', '\r', '\t', '\n' -> {} // Ignore whitespace
+          case ' ' -> System.out.println("SPACE ' ' null");
+          case '\r' -> System.out.println("CARRIAGE_RETURN \\r null");
+          case '\t' -> System.out.println("TAB \\t null");
+          case '\n' -> {
+            System.out.println("NEWLINE \\n null");
+            lineNumber++;
+          }
           default -> {
             // Handle unsupported characters
-            System.err.println("[line 1] Error: Unexpected character: " + ch);
+            System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
             hasError = true;
           }
         }
