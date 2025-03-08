@@ -39,6 +39,8 @@ public class Main {
         }
       }
       System.out.println("EOF  null");
-    } 
+    } else {
+      System.out.println("EOF  null"); // Placeholder, remove this line when implementing the scanner
+    }
   }
 }
