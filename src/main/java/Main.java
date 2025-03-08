@@ -46,13 +46,11 @@ public class Main {
           default -> {
             // Optionally handle unsupported characters
             System.err.println("[line 1] Error: Unexpected character: " + ch);
-            System.exit(65);
           }
         }
       }
       System.out.println("EOF  null");
-      
-    } 
-    System.out.println("EOF  null"); // Placeholder, remove this line when implementing the scanner
+      System.exit(65);
+    }
   }
 }
