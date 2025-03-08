@@ -42,8 +42,7 @@ public class Main {
           System.out.println("RIGHT_BRACE } null");
         }
       }
-    } else {
-      System.out.println("EOF  null"); // Placeholder, remove this line when implementing the scanner
-    }
+    } 
+    System.out.println("EOF  null"); // Placeholder, remove this line when implementing the scanner
   }
 }
