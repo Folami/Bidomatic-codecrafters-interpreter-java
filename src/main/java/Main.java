@@ -5,20 +5,16 @@ import java.nio.file.Path;
 public class Main {
     public static void main(String[] args) {
         System.err.println("Logs from your program will appear here!");
-
         if (args.length < 2) {
             System.err.println("Usage: ./your_program.sh tokenize <filename>");
             System.exit(1);
         }
-
         String command = args[0];
         String filename = args[1];
-
         if (!command.equals("tokenize")) {
             System.err.println("Unknown command: " + command);
             System.exit(1);
         }
-
         String fileContents = "";
         try {
             fileContents = Files.readString(Path.of(filename));
@@ -26,7 +22,6 @@ public class Main {
             System.err.println("Error reading file: " + e.getMessage());
             System.exit(1);
         }
-
         tokenize(fileContents);
     }
 
@@ -34,52 +29,42 @@ public class Main {
         boolean hasError = false;
         int lineNumber = 1;
         int index = 0;
-
         while (index < fileContents.length()) {
             char ch = fileContents.charAt(index);
-
             if (ch == '\n') {
                 lineNumber++;
                 index++;
                 continue;
             }
-
             if (ch == '/' && index + 1 < fileContents.length() && fileContents.charAt(index + 1) == '/') {
                 index = handleComment(fileContents, index);
                 continue;
             }
-
             if ("(){}*+-.,;".indexOf(ch) != -1) {
                 handleSingleCharacterToken(ch);
                 index++;
                 continue;
             }
-
             if (Character.isWhitespace(ch)) {
                 index++;
                 continue;
             }
-
             if (ch == '"') {
                 index = handleStringLiteral(fileContents, index, lineNumber);
                 continue;
             }
-
             if (Character.isDigit(ch)) {
                 index = handleNumberLiteral(fileContents, index);
                 continue;
             }
-
             if (Character.isLetter(ch) || ch == '_') {
                 index = handleIdentifier(fileContents, index);
                 continue;
             }
-
             System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
             hasError = true;
             index++;
         }
-
         System.out.println("EOF  null");
         System.exit(hasError ? 65 : 0);
     }
@@ -110,7 +95,6 @@ public class Main {
         StringBuilder stringLiteral = new StringBuilder();
         index++; // Skip opening quote
         boolean unterminated = true;
-
         while (index < fileContents.length()) {
             char ch = fileContents.charAt(index);
             if (ch == '"') {
@@ -121,7 +105,6 @@ public class Main {
             stringLiteral.append(ch);
             index++;
         }
-
         if (unterminated) {
             System.err.println("[line " + lineNumber + "] Error: Unterminated string.");
         } else {
