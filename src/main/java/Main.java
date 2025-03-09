@@ -36,62 +36,47 @@ public class Main {
                 index++;
                 continue;
             }
-            if (ch == '/') { // Handle comments first
-                if (index + 1 < fileContents.length() && fileContents.charAt(index + 1) == '/') {
-                    index = handleComment(fileContents, index);
-                    continue;
-                }
+            if (ch == '/' && index + 1 < fileContents.length() && fileContents.charAt(index + 1) == '/') {
+                index = handleComment(fileContents, index);
+                continue;
             }
-
             if ("(){}*+-.,;".indexOf(ch) != -1) {
                 handleSingleCharacterToken(ch);
                 index++;
                 continue;
             }
-
             if (Character.isWhitespace(ch)) {
                 index++;
                 continue;
             }
-
             if (ch == '"') {
                 index = handleStringLiteral(fileContents, index, lineNumber);
                 continue;
             }
-
             if (Character.isDigit(ch)) {
                 index = handleNumberLiteral(fileContents, index);
                 continue;
             }
-
             if (Character.isLetter(ch) || ch == '_') {
                 index = handleIdentifier(fileContents, index);
                 continue;
             }
-
-
-            // Handle relational operators before reporting unexpected characters
             if (handleRelationalOperator(fileContents, index, lineNumber)) {
-                index += 2; // Advance index past the 2-char token
+                index += 2;
                 continue;
             }
-
             if (handleAssignmentOrEqualityOperator(fileContents, index, lineNumber)) {
-                index += 2; // Move index past 2-char token
+                index += 2;
                 continue;
             }
-
             if (handleNegationOrInequalityOperator(fileContents, index, lineNumber)) {
-                index += 2; // Move index past 2-char token
+                index += 2;
                 continue;
             }
-
-            // If none of the above matched, it's an unexpected character
             System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
             hasError = true;
             index++;
         }
-
         System.out.println("EOF  null");
         System.exit(hasError ? 65 : 0);
     }
@@ -192,15 +177,14 @@ public class Main {
         char c1 = fileContents.charAt(index);
         char c2 = fileContents.charAt(index + 1);
         if (c1 == '=' && c2 == '=') {
-            System.out.println("EQUAL == null");
+            System.out.println("EQUAL_EQUAL == null");
             return true;
         } else if (c1 == '=') {
-            System.out.println("ASSIGN = null");
+            System.out.println("EQUAL = null");
             return true;
         }
         return false;
     }
-
 
     private static boolean handleNegationOrInequalityOperator(String fileContents, int index, int lineNumber) {
         if (index + 1 >= fileContents.length()) {
@@ -209,7 +193,7 @@ public class Main {
         char c1 = fileContents.charAt(index);
         char c2 = fileContents.charAt(index + 1);
         if (c1 == '!' && c2 == '=') {
-            System.out.println("NOT_EQUAL != null");
+            System.out.println("BANG_EQUAL != null");
             return true;
         } else if (c1 == '!') {
             System.out.println("BANG ! null");
@@ -218,4 +202,3 @@ public class Main {
         return false;
     }
 }
-
