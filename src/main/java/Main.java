@@ -40,49 +40,42 @@ public class Main {
                 index = handleComment(fileContents, index);
                 continue;
             }
-
-            if (Character.isWhitespace(ch)) {
-                index++;
-                continue;
-            }
-
-            // Prioritize longer tokens (multi-character lexemes) first
-            if (index + 1 < fileContents.length() && handleRelationalOperator(fileContents, index, lineNumber)) {
-                index += 2;
-                continue;
-            }
-             if (index + 1 < fileContents.length() && handleAssignmentOrEqualityOperator(fileContents, index, lineNumber)) {
-                index += 2;
-                continue;
-            }
-             if (index + 1 < fileContents.length() && handleNegationOrInequalityOperator(fileContents, index, lineNumber)) {
-                index += 2;
-                continue;
-            }
-            // Then handle single-character tokens
             if ("(){}*+-.,;".indexOf(ch) != -1) {
                 handleSingleCharacterToken(ch);
                 index++;
                 continue;
             }
-
-
+            if (Character.isWhitespace(ch)) {
+                index++;
+                continue;
+            }
             if (ch == '"') {
                 index = handleStringLiteral(fileContents, index, lineNumber);
                 continue;
             }
-
             if (Character.isDigit(ch)) {
                 index = handleNumberLiteral(fileContents, index);
                 continue;
             }
-
             if (Character.isLetter(ch) || ch == '_') {
                 index = handleIdentifier(fileContents, index);
                 continue;
             }
-
-            // Handle invalid characters
+            int consumed = handleRelationalOperator(fileContents, index, lineNumber);
+            if (consumed > 0) {
+                index += consumed;
+                continue;
+            }
+            consumed = handleAssignmentOrEqualityOperator(fileContents, index, lineNumber);
+            if (consumed > 0) {
+                index += consumed;
+                continue;
+            }
+            consumed = handleNegationOrInequalityOperator(fileContents, index, lineNumber);
+            if (consumed > 0) {
+                index += consumed;
+                continue;
+            }
             System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
             hasError = true;
             index++;
@@ -156,65 +149,6 @@ public class Main {
         }
         System.out.println("IDENTIFIER " + identifier + " null");
         return index;
-    }
-
-    private static void tokenize(String fileContents) {
-        boolean hasError = false;
-        int lineNumber = 1;
-        int index = 0;
-        while (index < fileContents.length()) {
-            char ch = fileContents.charAt(index);
-            if (ch == '\n') {
-                lineNumber++;
-                index++;
-                continue;
-            }
-            if (ch == '/' && index + 1 < fileContents.length() && fileContents.charAt(index + 1) == '/') {
-                index = handleComment(fileContents, index);
-                continue;
-            }
-            if ("(){}*+-.,;".indexOf(ch) != -1) {
-                handleSingleCharacterToken(ch);
-                index++;
-                continue;
-            }
-            if (Character.isWhitespace(ch)) {
-                index++;
-                continue;
-            }
-            if (ch == '"') {
-                index = handleStringLiteral(fileContents, index, lineNumber);
-                continue;
-            }
-            if (Character.isDigit(ch)) {
-                index = handleNumberLiteral(fileContents, index);
-                continue;
-            }
-            if (Character.isLetter(ch) || ch == '_') {
-                index = handleIdentifier(fileContents, index);
-                continue;
-            }
-            int consumed = handleRelationalOperator(fileContents, index, lineNumber);
-            if (consumed > 0) {
-                index += consumed;
-                continue;
-            }
-            consumed = handleAssignmentOrEqualityOperator(fileContents, index, lineNumber);
-            if (consumed > 0) {
-                index += consumed;
-                continue;
-            }
-            consumed = handleNegationOrInequalityOperator(fileContents, index, lineNumber);
-            if (consumed > 0) {
-                index += consumed;
-                continue;
-            }
-            System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
-            hasError = true;
-            index++;
-        }
-        System.out.println("EOF  null");
-        System.exit(hasError ? 65 : 0);
     }
 
     private static int handleRelationalOperator(String fileContents, int index, int lineNumber) {
