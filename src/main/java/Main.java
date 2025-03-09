@@ -1,206 +1,135 @@
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class Main {
+    private static final String[] TOKENS = {
+        "LEFT_PAREN", "RIGHT_PAREN",
+        "LEFT_BRACE", "RIGHT_BRACE",
+        "COMMA", "DOT", "MINUS", "PLUS",
+        "SEMICOLON", "STAR", "SLASH",
+        "QUESTION", "COLON", "EQ",
+        "EQEQ", "NEQ", "LT", "GT",
+        "LTEQ", "GTEQ", "PLUSPLUS",
+        "MINUSMINUS", "ARROW",
+        "IDENTIFIER", "STRING", "NUMBER",
+        "AND", "OR", "NOT",
+        "IF", "ELSE", "FOR",
+        "WHILE", "FUN", "RETURN",
+        "BREAK", "CONTINUE", "CLASS",
+        "TRUE", "FALSE", "NULL",
+        "EOF"
+    };
+
+    private static final String[] SINGLE_CHAR_TOKENS = {
+        "(", ")", "{", "}", ",", ".", "-",
+        "+", ";", "*", "/", "?", ":", "=",
+        "<", ">", "!", "&", "|", "@"
+    };
+
+    private static final String[] TWO_CHAR_TOKENS = {
+        "==", "!=", "<=", ">=", "//", "++",
+        "--", "->", "&&", "||", "<<" , ">>"
+    };
+
+    private static final String WHITESPACE = " \t\n\r";
+    private static final String DIGITS = "0123456789";
+    private static final String LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String LETTERS_DIGITS = LETTERS + DIGITS + "_";
+
+    private static int line = 1;
+    private static int position = 0;
+    private static String input;
+    private static int inputPos = 0;
+
     public static void main(String[] args) {
-        System.err.println("Logs from your program will appear here!");
-        if (args.length < 2) {
-            System.err.println("Usage: ./your_program.sh tokenize <filename>");
-            System.exit(1);
+        if (args.length != 1) {
+            System.out.println("Usage: java Main <filename>");
+            return;
         }
-        String command = args[0];
-        String filename = args[1];
-        if (!command.equals("tokenize")) {
-            System.err.println("Unknown command: " + command);
-            System.exit(1);
-        }
-        String fileContents = "";
         try {
-            fileContents = Files.readString(Path.of(filename));
-        } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
-            System.exit(1);
+            File file = new File(args[0]);
+            Scanner scanner = new Scanner(file);
+            input = scanner.useDelimiter("\\Z").next();
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + args[0]);
+            return;
         }
-        tokenize(fileContents);
-    }
-
-    private static void tokenize(String fileContents) {
-        boolean hasError = false;
-        int lineNumber = 1;
-        int index = 0;
-        while (index < fileContents.length()) {
-            char ch = fileContents.charAt(index);
-            if (ch == '\n') {
-                lineNumber++;
-                index++;
+        while (inputPos < input.length()) {
+            char c = input.charAt(inputPos);
+            if (WHITESPACE.indexOf(c) != -1) {
+                if (c == '\n') {
+                    line++;
+                }
+                inputPos++;
                 continue;
             }
-            if (ch == '/' && index + 1 < fileContents.length() && fileContents.charAt(index + 1) == '/') {
-                index = handleComment(fileContents, index);
-                continue;
+            if (c == '/') {
+                if (inputPos + 1 < input.length() && input.charAt(inputPos + 1) == '/') {
+                    // Skip comment
+                    while (inputPos < input.length() && input.charAt(inputPos) != '\n') {
+                        inputPos++;
+                    }
+                    if (inputPos < input.length()) {
+                        line++;
+                        inputPos++;
+                    }
+                    continue;
+                }
             }
-            // Handle single-character tokens, including division operator
-            if ("(){}*+-.,;/".indexOf(ch) != -1) {  // Added '/' here
-                handleSingleCharacterToken(ch);
-                index++;
-                continue;
+            for (String token : SINGLE_CHAR_TOKENS) {
+                if (token.length() == 1 && c == token.charAt(0)) {
+                    System.out.println(token.toUpperCase().replaceFirst("([A-Z])", " $1").trim() + " null");
+                    inputPos++;
+                    break;
+                }
             }
-            if (Character.isWhitespace(ch)) {
-                index++;
-                continue;
+            for (String token : TWO_CHAR_TOKENS) {
+                if (inputPos + 1 < input.length()) {
+                    String twoChars = input.substring(inputPos, inputPos + 2);
+                    if (twoChars.equals(token)) {
+                        System.out.println(token.toUpperCase().replaceFirst("([A-Z])", " $1").trim() + " null");
+                        inputPos += 2;
+                        break;
+                    }
+                }
             }
-            if (ch == '"') {
-                index = handleStringLiteral(fileContents, index, lineNumber);
-                continue;
-            }
-            if (Character.isDigit(ch)) {
-                index = handleNumberLiteral(fileContents, index);
-                continue;
-            }
-            if (Character.isLetter(ch) || ch == '_') {
-                index = handleIdentifier(fileContents, index);
-                continue;
-            }
-            if (handleRelationalOperator(fileContents, index, lineNumber)) {
-                index += 2;
-                continue;
-            }
-            if (handleAssignmentOrEqualityOperator(fileContents, index, lineNumber)) {
-                index += 2;
-                continue;
-            }
-            if (handleNegationOrInequalityOperator(fileContents, index, lineNumber)) {
-                index += 2;
-                continue;
-            }
-            System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
-            hasError = true;
-            index++;
-        }
-        System.out.println("EOF  null");
-        System.exit(hasError ? 65 : 0);
-    }
-
-    private static int handleComment(String fileContents, int index) {
-        while (index < fileContents.length() && fileContents.charAt(index) != '\n') {
-            index++;
-        }
-        return index;
-    }
-
-    private static void handleSingleCharacterToken(char ch) {
-        switch (ch) {
-            case '(' -> System.out.println("LEFT_PAREN ( null");
-            case ')' -> System.out.println("RIGHT_PAREN ) null");
-            case '{' -> System.out.println("LEFT_BRACE { null");
-            case '}' -> System.out.println("RIGHT_BRACE } null");
-            case '*' -> System.out.println("STAR * null");
-            case '+' -> System.out.println("PLUS + null");
-            case '-' -> System.out.println("MINUS - null");
-            case ',' -> System.out.println("COMMA , null");
-            case '.' -> System.out.println("DOT . null");
-            case ';' -> System.out.println("SEMICOLON ; null");
-            case '/' -> System.out.println("SLASH / null");  // Added division operator
-        }
-    }
-
-    private static int handleStringLiteral(String fileContents, int index, int lineNumber) {
-        StringBuilder stringLiteral = new StringBuilder();
-        index++; // Skip opening quote
-        boolean unterminated = true;
-        while (index < fileContents.length()) {
-            char ch = fileContents.charAt(index);
-            if (ch == '"') {
-                unterminated = false;
+            if (inputPos >= input.length()) {
                 break;
             }
-            if (ch == '\n') lineNumber++;
-            stringLiteral.append(ch);
-            index++;
+            if (c == '"' || c == '\'') {
+                // Handle strings
+                inputPos++;
+                while (inputPos < input.length() && input.charAt(inputPos) != c) {
+                    inputPos++;
+                }
+                if (inputPos < input.length()) {
+                    inputPos++;
+                }
+                continue;
+            }
+            if (LETTERS.indexOf(c) != -1) {
+                // Handle identifiers
+                while (inputPos < input.length() && LETTERS_DIGITS.indexOf(input.charAt(inputPos)) != -1) {
+                    inputPos++;
+                }
+                String identifier = input.substring(inputPos - LETTERS_DIGITS.indexOf(c), inputPos);
+                System.out.println("IDENTIFIER " + identifier + " null");
+                continue;
+            }
+            if (DIGITS.indexOf(c) != -1) {
+                // Handle numbers
+                while (inputPos < input.length() && DIGITS.indexOf(input.charAt(inputPos)) != -1) {
+                    inputPos++;
+                }
+                String number = input.substring(inputPos - 1, inputPos);
+                System.out.println("NUMBER " + number + " null");
+                continue;
+            }
+            System.out.println("[line " + line + "] Error: Unexpected character: " + c);
+            inputPos++;
         }
-        if (unterminated) {
-            System.err.println("[line " + lineNumber + "] Error: Unterminated string.");
-        } else {
-            System.out.println("STRING \"" + stringLiteral + "\" null");
-            index++; // Skip closing quote
-        }
-        return index;
-    }
-
-    private static int handleNumberLiteral(String fileContents, int index) {
-        StringBuilder numberLiteral = new StringBuilder();
-        while (index < fileContents.length() && Character.isDigit(fileContents.charAt(index))) {
-            numberLiteral.append(fileContents.charAt(index));
-            index++;
-        }
-        System.out.println("NUMBER " + numberLiteral + " null");
-        return index;
-    }
-
-    private static int handleIdentifier(String fileContents, int index) {
-        StringBuilder identifier = new StringBuilder();
-        while (index < fileContents.length() && 
-               (Character.isLetterOrDigit(fileContents.charAt(index)) || 
-                fileContents.charAt(index) == '_')) {
-            identifier.append(fileContents.charAt(index));
-            index++;
-        }
-        System.out.println("IDENTIFIER " + identifier + " null");
-        return index;
-    }
-
-    private static boolean handleRelationalOperator(String fileContents, int index, int lineNumber) {
-        if (index + 1 >= fileContents.length()) {
-            return false;
-        }
-        char c1 = fileContents.charAt(index);
-        char c2 = fileContents.charAt(index + 1);
-        if (c1 == '<' && c2 == '=') {
-            System.out.println("LESS_EQUAL <= null");
-            return true;
-        } else if (c1 == '>' && c2 == '=') {
-            System.out.println("GREATER_EQUAL >= null");
-            return true;
-        } else if (c1 == '<') {
-            System.out.println("LESS < null");
-            return true;
-        } else if (c1 == '>') {
-            System.out.println("GREATER > null");
-            return true;
-        }
-        return false;
-    }
-
-    private static boolean handleAssignmentOrEqualityOperator(String fileContents, int index, int lineNumber) {
-        if (index + 1 >= fileContents.length()) {
-            return false;
-        }
-        char c1 = fileContents.charAt(index);
-        char c2 = fileContents.charAt(index + 1);
-        if (c1 == '=' && c2 == '=') {
-            System.out.println("EQUAL_EQUAL == null");
-            return true;
-        } else if (c1 == '=') {
-            System.out.println("EQUAL = null");
-            return true;
-        }
-        return false;
-    }
-
-    private static boolean handleNegationOrInequalityOperator(String fileContents, int index, int lineNumber) {
-        if (index + 1 >= fileContents.length()) {
-            return false;
-        }
-        char c1 = fileContents.charAt(index);
-        char c2 = fileContents.charAt(index + 1);
-        if (c1 == '!' && c2 == '=') {
-            System.out.println("BANG_EQUAL != null");
-            return true;
-        } else if (c1 == '!') {
-            System.out.println("BANG ! null");
-            return true;
-        }
-        return false;
+        System.out.println("EOF null");
     }
 }
