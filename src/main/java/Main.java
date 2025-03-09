@@ -36,14 +36,31 @@ public class Main {
                 index++;
                 continue;
             }
-            if (ch == '/') {
-                if (index + 1 < fileContents.length() && fileContents.charAt(index + 1) == '/') {
-                    index = handleComment(fileContents, index);
-                    continue;
-                }
+            if (ch == '/' && index + 1 < fileContents.length() && fileContents.charAt(index + 1) == '/') {
+                index = handleComment(fileContents, index);
+                continue;
             }
-
-            // Prioritize longer tokens (multi-character lexemes) first
+            if ("(){}*+-.,;".indexOf(ch) != -1) {
+                handleSingleCharacterToken(ch);
+                index++;
+                continue;
+            }
+            if (Character.isWhitespace(ch)) {
+                index++;
+                continue;
+            }
+            if (ch == '"') {
+                index = handleStringLiteral(fileContents, index, lineNumber);
+                continue;
+            }
+            if (Character.isDigit(ch)) {
+                index = handleNumberLiteral(fileContents, index);
+                continue;
+            }
+            if (Character.isLetter(ch) || ch == '_') {
+                index = handleIdentifier(fileContents, index);
+                continue;
+            }
             if (handleRelationalOperator(fileContents, index, lineNumber)) {
                 index += 2;
                 continue;
@@ -56,35 +73,6 @@ public class Main {
                 index += 2;
                 continue;
             }
-
-            // Then handle single-character tokens
-            if ("(){}*+-.,;".indexOf(ch) != -1) {
-                handleSingleCharacterToken(ch);
-                index++;
-                continue;
-            }
-
-            if (Character.isWhitespace(ch)) {
-                index++;
-                continue;
-            }
-
-            if (ch == '"') {
-                index = handleStringLiteral(fileContents, index, lineNumber);
-                continue;
-            }
-
-            if (Character.isDigit(ch)) {
-                index = handleNumberLiteral(fileContents, index);
-                continue;
-            }
-
-            if (Character.isLetter(ch) || ch == '_') {
-                index = handleIdentifier(fileContents, index);
-                continue;
-            }
-
-            // Handle invalid characters
             System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
             hasError = true;
             index++;
