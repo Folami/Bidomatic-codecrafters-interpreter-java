@@ -27,6 +27,10 @@ public class Main {
             System.exit(1);
         }
 
+        tokenize(fileContents);
+    }
+
+    private static void tokenize(String fileContents) {
         boolean hasError = false;
         int lineNumber = 1;
         int index = 0;
@@ -34,98 +38,43 @@ public class Main {
         while (index < fileContents.length()) {
             char ch = fileContents.charAt(index);
 
-            // Handle newlines
             if (ch == '\n') {
                 lineNumber++;
                 index++;
                 continue;
             }
 
-            // Handle comments
             if (ch == '/' && index + 1 < fileContents.length() && fileContents.charAt(index + 1) == '/') {
-                // Skip to end of line or end of file
-                while (index < fileContents.length() && fileContents.charAt(index) != '\n') {
-                    index++;
-                }
+                index = handleComment(fileContents, index);
                 continue;
             }
 
-            // Handle single-character tokens
             if ("(){}*+-.,;".indexOf(ch) != -1) {
-                switch (ch) {
-                    case '(' -> System.out.println("LEFT_PAREN ( null");
-                    case ')' -> System.out.println("RIGHT_PAREN ) null");
-                    case '{' -> System.out.println("LEFT_BRACE { null");
-                    case '}' -> System.out.println("RIGHT_BRACE } null");
-                    case '*' -> System.out.println("STAR * null");
-                    case '+' -> System.out.println("PLUS + null");
-                    case '-' -> System.out.println("MINUS - null");
-                    case ',' -> System.out.println("COMMA , null");
-                    case '.' -> System.out.println("DOT . null");
-                    case ';' -> System.out.println("SEMICOLON ; null");
-                }
+                handleSingleCharacterToken(ch);
                 index++;
                 continue;
             }
 
-            // Handle whitespace
             if (Character.isWhitespace(ch)) {
                 index++;
                 continue;
             }
 
-            // Handle string literals
             if (ch == '"') {
-                StringBuilder stringLiteral = new StringBuilder();
-                index++; // Skip opening quote
-                boolean unterminated = true;
-
-                while (index < fileContents.length()) {
-                    ch = fileContents.charAt(index);
-                    if (ch == '"') {
-                        unterminated = false;
-                        break;
-                    }
-                    if (ch == '\n') lineNumber++;
-                    stringLiteral.append(ch);
-                    index++;
-                }
-
-                if (unterminated) {
-                    System.err.println("[line " + lineNumber + "] Error: Unterminated string.");
-                    hasError = true;
-                } else {
-                    System.out.println("STRING \"" + stringLiteral + "\" null");
-                    index++; // Skip closing quote
-                }
+                index = handleStringLiteral(fileContents, index, lineNumber);
                 continue;
             }
 
-            // Handle number literals
             if (Character.isDigit(ch)) {
-                StringBuilder numberLiteral = new StringBuilder();
-                while (index < fileContents.length() && Character.isDigit(fileContents.charAt(index))) {
-                    numberLiteral.append(fileContents.charAt(index));
-                    index++;
-                }
-                System.out.println("NUMBER " + numberLiteral + " null");
+                index = handleNumberLiteral(fileContents, index);
                 continue;
             }
 
-            // Handle identifiers
             if (Character.isLetter(ch) || ch == '_') {
-                StringBuilder identifier = new StringBuilder();
-                while (index < fileContents.length() && 
-                       (Character.isLetterOrDigit(fileContents.charAt(index)) || 
-                        fileContents.charAt(index) == '_')) {
-                    identifier.append(fileContents.charAt(index));
-                    index++;
-                }
-                System.out.println("IDENTIFIER " + identifier + " null");
+                index = handleIdentifier(fileContents, index);
                 continue;
             }
 
-            // Handle invalid characters
             System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
             hasError = true;
             index++;
@@ -133,5 +82,74 @@ public class Main {
 
         System.out.println("EOF  null");
         System.exit(hasError ? 65 : 0);
+    }
+
+    private static int handleComment(String fileContents, int index) {
+        while (index < fileContents.length() && fileContents.charAt(index) != '\n') {
+            index++;
+        }
+        return index;
+    }
+
+    private static void handleSingleCharacterToken(char ch) {
+        switch (ch) {
+            case '(' -> System.out.println("LEFT_PAREN ( null");
+            case ')' -> System.out.println("RIGHT_PAREN ) null");
+            case '{' -> System.out.println("LEFT_BRACE { null");
+            case '}' -> System.out.println("RIGHT_BRACE } null");
+            case '*' -> System.out.println("STAR * null");
+            case '+' -> System.out.println("PLUS + null");
+            case '-' -> System.out.println("MINUS - null");
+            case ',' -> System.out.println("COMMA , null");
+            case '.' -> System.out.println("DOT . null");
+            case ';' -> System.out.println("SEMICOLON ; null");
+        }
+    }
+
+    private static int handleStringLiteral(String fileContents, int index, int lineNumber) {
+        StringBuilder stringLiteral = new StringBuilder();
+        index++; // Skip opening quote
+        boolean unterminated = true;
+
+        while (index < fileContents.length()) {
+            char ch = fileContents.charAt(index);
+            if (ch == '"') {
+                unterminated = false;
+                break;
+            }
+            if (ch == '\n') lineNumber++;
+            stringLiteral.append(ch);
+            index++;
+        }
+
+        if (unterminated) {
+            System.err.println("[line " + lineNumber + "] Error: Unterminated string.");
+        } else {
+            System.out.println("STRING \"" + stringLiteral + "\" null");
+            index++; // Skip closing quote
+        }
+        return index;
+    }
+
+    private static int handleNumberLiteral(String fileContents, int index) {
+        StringBuilder numberLiteral = new StringBuilder();
+        while (index < fileContents.length() && Character.isDigit(fileContents.charAt(index))) {
+            numberLiteral.append(fileContents.charAt(index));
+            index++;
+        }
+        System.out.println("NUMBER " + numberLiteral + " null");
+        return index;
+    }
+
+    private static int handleIdentifier(String fileContents, int index) {
+        StringBuilder identifier = new StringBuilder();
+        while (index < fileContents.length() && 
+               (Character.isLetterOrDigit(fileContents.charAt(index)) || 
+                fileContents.charAt(index) == '_')) {
+            identifier.append(fileContents.charAt(index));
+            index++;
+        }
+        System.out.println("IDENTIFIER " + identifier + " null");
+        return index;
     }
 }
