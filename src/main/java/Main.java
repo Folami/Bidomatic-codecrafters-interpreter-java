@@ -40,7 +40,8 @@ public class Main {
                 index = handleComment(fileContents, index);
                 continue;
             }
-            if ("(){}*+-.,;".indexOf(ch) != -1) {
+            // Handle single-character tokens, including division operator
+            if ("(){}*+-.,;/".indexOf(ch) != -1) {  // Added '/' here
                 handleSingleCharacterToken(ch);
                 index++;
                 continue;
@@ -100,6 +101,7 @@ public class Main {
             case ',' -> System.out.println("COMMA , null");
             case '.' -> System.out.println("DOT . null");
             case ';' -> System.out.println("SEMICOLON ; null");
+            case '/' -> System.out.println("SLASH / null");  // Added division operator
         }
     }
 
@@ -202,4 +204,3 @@ public class Main {
         return false;
     }
 }
-
