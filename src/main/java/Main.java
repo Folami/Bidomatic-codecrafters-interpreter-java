@@ -37,7 +37,7 @@ public class Main {
                 continue;
             }
             if (ch == '/' && index + 1 < fileContents.length() && fileContents.charAt(index + 1) == '/') {
-                index = handleComment(fileContents, index);
+                index = handleComment(fileContents, index, lineNumber);
                 continue;
             }
             if ("(){}*+-.,;".indexOf(ch) != -1) {
@@ -81,8 +81,14 @@ public class Main {
         System.exit(hasError ? 65 : 0);
     }
 
-    private static int handleComment(String fileContents, int index) {
-        while (index < fileContents.length() && fileContents.charAt(index) != '\n') {
+    private static int handleComment(String fileContents, int index, int lineNumber) {
+        while (index < fileContents.length()) {
+            if (fileContents.charAt(index) == '\n') {
+                lineNumber++;
+            }
+            if (fileContents.charAt(index) == '\n' || fileContents.charAt(index) == '\r') {
+                return index + 1;
+            }
             index++;
         }
         return index;
@@ -109,11 +115,11 @@ public class Main {
         boolean unterminated = true;
         while (index < fileContents.length()) {
             char ch = fileContents.charAt(index);
+            if (ch == '\n') lineNumber++;
             if (ch == '"') {
                 unterminated = false;
                 break;
             }
-            if (ch == '\n') lineNumber++;
             stringLiteral.append(ch);
             index++;
         }
@@ -202,4 +208,3 @@ public class Main {
         return false;
     }
 }
-
