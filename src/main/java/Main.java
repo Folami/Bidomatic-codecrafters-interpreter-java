@@ -58,7 +58,8 @@ public class Main {
             }
 
             // Then handle single-character tokens
-            if (handleSingleCharacterToken(ch)) {
+            if ("(){}*+-.,;".indexOf(ch) != -1) {
+                handleSingleCharacterToken(ch);
                 index++;
                 continue;
             }
