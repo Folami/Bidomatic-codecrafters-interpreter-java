@@ -75,7 +75,7 @@ public class Main {
                 index += consumed;
                 continue;
             }
-            consumed = int(handleNegationOrInequalityOperator(fileContents, index, lineNumber));
+            consumed = Boolean.hashCode(handleNegationOrInequalityOperator(fileContents, index, lineNumber));
             if (consumed > 0) {
                 index += consumed;
                 continue;
