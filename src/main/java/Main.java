@@ -54,7 +54,7 @@ public class Main {
                 index += consumed;
                 continue;
             }
-            consumed = handleNegationOrInequalityOperator(fileContents, index, lineNumber);
+            consumed = Boolean.hashCode(handleNegationOrInequalityOperator(fileContents, index, lineNumber));
             if (consumed > 0) {
                 index += consumed;
                 continue;
