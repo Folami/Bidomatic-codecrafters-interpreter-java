@@ -34,108 +34,104 @@ public class Main {
         while (index < fileContents.length()) {
             char ch = fileContents.charAt(index);
 
+            // Handle newlines
             if (ch == '\n') {
                 lineNumber++;
-            } else if (ch == '/') { // Check for comments
-                if (index + 1 < fileContents.length() && fileContents.charAt(index + 1) == '/') {
-                    // Single-line comment; skip to next line
-                    index = fileContents.indexOf('\n', index + 1);
-                    if (index == -1) {
-                        index = fileContents.length(); // Handle comment to EOF
-                    }
-                    lineNumber++;
-                    continue;
-                }
-            } else if ("(){}*+-.,;".indexOf(ch) != -1) {
-                // Valid single-character token handling remains the same ...
-                switch (ch) {
-                    case '(':
-                        System.out.println("LEFT_PAREN ( null");
-                        break;
-                    case ')':
-                        System.out.println("RIGHT_PAREN ) null");
-                        break;
-                    case '{':
-                        System.out.println("LEFT_BRACE { null");
-                        break;
-                    case '}':
-                        System.out.println("RIGHT_BRACE } null");
-                        break;
-                    case '*':
-                        System.out.println("STAR * null");
-                        break;
-                    case '+':
-                        System.out.println("PLUS + null");
-                        break;
-                    case '-':
-                        System.out.println("MINUS - null");
-                        break;
-                    case ',':
-                        System.out.println("COMMA , null");
-                        break;
-                    case '.':
-                        System.out.println("DOT . null");
-                        break;
-                    case ';':
-                        System.out.println("SEMICOLON ; null");
-                        break;
-                }
-            } else if (Character.isWhitespace(ch)) {
-                // Ignore whitespace
-            } else if (ch == '"') {
-                // Handle string literals
-                StringBuilder stringLiteral = new StringBuilder();
                 index++;
+                continue;
+            }
+
+            // Handle comments
+            if (ch == '/' && index + 1 < fileContents.length() && fileContents.charAt(index + 1) == '/') {
+                // Skip to end of line or end of file
+                while (index < fileContents.length() && fileContents.charAt(index) != '\n') {
+                    index++;
+                }
+                continue;
+            }
+
+            // Handle single-character tokens
+            if ("(){}*+-.,;".indexOf(ch) != -1) {
+                switch (ch) {
+                    case '(' -> System.out.println("LEFT_PAREN ( null");
+                    case ')' -> System.out.println("RIGHT_PAREN ) null");
+                    case '{' -> System.out.println("LEFT_BRACE { null");
+                    case '}' -> System.out.println("RIGHT_BRACE } null");
+                    case '*' -> System.out.println("STAR * null");
+                    case '+' -> System.out.println("PLUS + null");
+                    case '-' -> System.out.println("MINUS - null");
+                    case ',' -> System.out.println("COMMA , null");
+                    case '.' -> System.out.println("DOT . null");
+                    case ';' -> System.out.println("SEMICOLON ; null");
+                }
+                index++;
+                continue;
+            }
+
+            // Handle whitespace
+            if (Character.isWhitespace(ch)) {
+                index++;
+                continue;
+            }
+
+            // Handle string literals
+            if (ch == '"') {
+                StringBuilder stringLiteral = new StringBuilder();
+                index++; // Skip opening quote
                 boolean unterminated = true;
+
                 while (index < fileContents.length()) {
                     ch = fileContents.charAt(index);
                     if (ch == '"') {
                         unterminated = false;
                         break;
                     }
-                    if (ch == '\n') {
-                        lineNumber++;
-                    }
+                    if (ch == '\n') lineNumber++;
                     stringLiteral.append(ch);
                     index++;
                 }
+
                 if (unterminated) {
                     System.err.println("[line " + lineNumber + "] Error: Unterminated string.");
                     hasError = true;
                 } else {
-                    System.out.println("STRING \"" + stringLiteral.toString() + "\" null");
+                    System.out.println("STRING \"" + stringLiteral + "\" null");
+                    index++; // Skip closing quote
                 }
-            } else if (Character.isDigit(ch)) {
-                // Handle number literals
+                continue;
+            }
+
+            // Handle number literals
+            if (Character.isDigit(ch)) {
                 StringBuilder numberLiteral = new StringBuilder();
                 while (index < fileContents.length() && Character.isDigit(fileContents.charAt(index))) {
                     numberLiteral.append(fileContents.charAt(index));
                     index++;
                 }
-                index--; // Adjust for the loop increment
-                System.out.println("NUMBER " + numberLiteral.toString() + " null");
-            } else if (Character.isLetter(ch) || ch == '_') {
-                // Handle identifiers
+                System.out.println("NUMBER " + numberLiteral + " null");
+                continue;
+            }
+
+            // Handle identifiers
+            if (Character.isLetter(ch) || ch == '_') {
                 StringBuilder identifier = new StringBuilder();
-                while (index < fileContents.length() && (Character.isLetterOrDigit(fileContents.charAt(index)) || fileContents.charAt(index) == '_')) {
+                while (index < fileContents.length() && 
+                       (Character.isLetterOrDigit(fileContents.charAt(index)) || 
+                        fileContents.charAt(index) == '_')) {
                     identifier.append(fileContents.charAt(index));
                     index++;
                 }
-                index--; // Adjust for the loop increment
-                System.out.println("IDENTIFIER " + identifier.toString() + " null");
-            } else {
-                // Handle invalid character
-                hasError = true;
-                System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
+                System.out.println("IDENTIFIER " + identifier + " null");
+                continue;
             }
+
+            // Handle invalid characters
+            System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
+            hasError = true;
             index++;
         }
 
         System.out.println("EOF  null");
-        if (hasError) {
-            System.exit(65);
-        } else {
-            System.exit(0);
-        }
+        System.exit(hasError ? 65 : 0);
     }
 }
