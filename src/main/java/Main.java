@@ -40,39 +40,49 @@ public class Main {
                 index = handleComment(fileContents, index);
                 continue;
             }
+
+            if (Character.isWhitespace(ch)) {
+                index++;
+                continue;
+            }
+
+            // Prioritize longer tokens (multi-character lexemes) first
+            if (index + 1 < fileContents.length() && handleRelationalOperator(fileContents, index, lineNumber)) {
+                index += 2;
+                continue;
+            }
+             if (index + 1 < fileContents.length() && handleAssignmentOrEqualityOperator(fileContents, index, lineNumber)) {
+                index += 2;
+                continue;
+            }
+             if (index + 1 < fileContents.length() && handleNegationOrInequalityOperator(fileContents, index, lineNumber)) {
+                index += 2;
+                continue;
+            }
+            // Then handle single-character tokens
             if ("(){}*+-.,;".indexOf(ch) != -1) {
                 handleSingleCharacterToken(ch);
                 index++;
                 continue;
             }
-            if (Character.isWhitespace(ch)) {
-                index++;
-                continue;
-            }
+
+
             if (ch == '"') {
                 index = handleStringLiteral(fileContents, index, lineNumber);
                 continue;
             }
+
             if (Character.isDigit(ch)) {
                 index = handleNumberLiteral(fileContents, index);
                 continue;
             }
+
             if (Character.isLetter(ch) || ch == '_') {
                 index = handleIdentifier(fileContents, index);
                 continue;
             }
-            if (handleRelationalOperator(fileContents, index, lineNumber)) {
-                index += 2;
-                continue;
-            }
-            if (handleAssignmentOrEqualityOperator(fileContents, index, lineNumber)) {
-                index += 2;
-                continue;
-            }
-            if (handleNegationOrInequalityOperator(fileContents, index, lineNumber)) {
-                index += 2;
-                continue;
-            }
+
+            // Handle invalid characters
             System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
             hasError = true;
             index++;
@@ -138,9 +148,9 @@ public class Main {
 
     private static int handleIdentifier(String fileContents, int index) {
         StringBuilder identifier = new StringBuilder();
-        while (index < fileContents.length() && 
-               (Character.isLetterOrDigit(fileContents.charAt(index)) || 
-                fileContents.charAt(index) == '_')) {
+        while (index < fileContents.length() &&
+                (Character.isLetterOrDigit(fileContents.charAt(index)) ||
+                        fileContents.charAt(index) == '_')) {
             identifier.append(fileContents.charAt(index));
             index++;
         }
@@ -149,26 +159,22 @@ public class Main {
     }
 
     private static boolean handleRelationalOperator(String fileContents, int index, int lineNumber) {
-        if (index + 1 >= fileContents.length()) {
+       if (index + 1 >= fileContents.length()) {
             return false;
         }
         char c1 = fileContents.charAt(index);
         char c2 = fileContents.charAt(index + 1);
         if (c1 == '<' && c2 == '=') {
             System.out.println("LESS_EQUAL <= null");
-            index += 2;
             return true;
         } else if (c1 == '>' && c2 == '=') {
             System.out.println("GREATER_EQUAL >= null");
-            index += 2;
             return true;
         } else if (c1 == '<') {
             System.out.println("LESS < null");
-            index++;
             return true;
         } else if (c1 == '>') {
             System.out.println("GREATER > null");
-            index++;
             return true;
         }
         return false;
@@ -206,4 +212,3 @@ public class Main {
         return false;
     }
 }
-
