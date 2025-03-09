@@ -49,12 +49,12 @@ public class Main {
                 index += consumed;  // Increment by actual chars consumed
                 continue;
             }
-            consumed = handleAssignmentOrEqualityOperator(fileContents, index, lineNumber);
+            consumed = int(handleAssignmentOrEqualityOperator(fileContents, index, lineNumber));
             if (consumed > 0) {
                 index += consumed;
                 continue;
             }
-            consumed = handleNegationOrInequalityOperator(fileContents, index, lineNumber);
+            consumed = int(handleNegationOrInequalityOperator(fileContents, index, lineNumber));
             if (consumed > 0) {
                 index += consumed;
                 continue;
