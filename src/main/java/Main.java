@@ -160,37 +160,26 @@ public class Main {
         return index;
     }
 
-    private static int handleRelationalOperator(String fileContents, int index, int lineNumber) {
-        /*
-         * Handles relational operators (<, >, <=, >=).
-         * Returns: Number of characters consumed (1 or 2), or 0 if no match.
-         */
+    private static boolean handleRelationalOperator(String fileContents, int index, int lineNumber) {
         if (index + 1 >= fileContents.length()) {
-            if (fileContents.charAt(index) == '<') {
-                System.out.println("LESS < null");
-                return 1;
-            } else if (fileContents.charAt(index) == '>') {
-                System.out.println("GREATER > null");
-                return 1;
-            }
-            return 0;
+            return false;
         }
         char c1 = fileContents.charAt(index);
         char c2 = fileContents.charAt(index + 1);
         if (c1 == '<' && c2 == '=') {
             System.out.println("LESS_EQUAL <= null");
-            return 2;
+            return true;
         } else if (c1 == '>' && c2 == '=') {
             System.out.println("GREATER_EQUAL >= null");
-            return 2;
+            return true;
         } else if (c1 == '<') {
             System.out.println("LESS < null");
-            return 1;
+            return true;
         } else if (c1 == '>') {
             System.out.println("GREATER > null");
-            return 1;
+            return true;
         }
-        return 0;
+        return false;
     }
 
     private static boolean handleAssignmentOrEqualityOperator(String fileContents, int index, int lineNumber) {
