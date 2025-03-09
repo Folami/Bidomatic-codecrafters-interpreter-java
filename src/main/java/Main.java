@@ -43,24 +43,21 @@ public class Main {
                 }
             }
 
-            // Handle multi-character tokens, returning characters consumed
-            int consumed = handleRelationalOperator(fileContents, index, lineNumber);
-            if (consumed > 0) {
-                index += consumed;  // Increment by actual chars consumed
+            // Prioritize longer tokens (multi-character lexemes) first
+            if (handleRelationalOperator(fileContents, index, lineNumber)) {
+                index += 2;
                 continue;
             }
-            consumed = Boolean.hashCode(handleAssignmentOrEqualityOperator(fileContents, index, lineNumber));
-            if (consumed > 0) {
-                index += consumed;
+            if (handleAssignmentOrEqualityOperator(fileContents, index, lineNumber)) {
+                index += 2;
                 continue;
             }
-            consumed = Boolean.hashCode(handleNegationOrInequalityOperator(fileContents, index, lineNumber));
-            if (consumed > 0) {
-                index += consumed;
+            if (handleNegationOrInequalityOperator(fileContents, index, lineNumber)) {
+                index += 2;
                 continue;
             }
 
-            // Handle single-character tokens
+            // Then handle single-character tokens
             if ("(){}*+-.,;".indexOf(ch) != -1) {
                 handleSingleCharacterToken(ch);
                 index++;
