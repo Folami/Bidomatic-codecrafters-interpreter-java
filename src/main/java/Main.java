@@ -43,7 +43,8 @@ public class Main {
                 }
             }
 
-            if (handleSingleCharacterToken(ch)) {
+            if ("(){}*+-.,;".indexOf(ch) != -1) {
+                handleSingleCharacterToken(ch);
                 index++;
                 continue;
             }
