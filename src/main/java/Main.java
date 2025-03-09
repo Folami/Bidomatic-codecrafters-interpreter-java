@@ -31,52 +31,69 @@ public class Main {
         int index = 0;
         while (index < fileContents.length()) {
             char ch = fileContents.charAt(index);
+            
             if (ch == '\n') {
                 lineNumber++;
                 index++;
                 continue;
             }
+            
+            // Handle comments first
             if (ch == '/' && index + 1 < fileContents.length() && fileContents.charAt(index + 1) == '/') {
                 index = handleComment(fileContents, index);
                 continue;
             }
+            
+            // Then handle division operator
+            if (ch == '/') {
+                System.out.println("SLASH / null");
+                index++;
+                continue;
+            }
+            
             if ("(){}*+-.,;".indexOf(ch) != -1) {
                 handleSingleCharacterToken(ch);
                 index++;
                 continue;
             }
+            
             if (Character.isWhitespace(ch)) {
                 index++;
                 continue;
             }
+            
             if (ch == '"') {
                 index = handleStringLiteral(fileContents, index, lineNumber);
                 continue;
             }
+            
             if (Character.isDigit(ch)) {
                 index = handleNumberLiteral(fileContents, index);
                 continue;
             }
+            
             if (Character.isLetter(ch) || ch == '_') {
                 index = handleIdentifier(fileContents, index);
                 continue;
             }
+            
             if (handleRelationalOperator(fileContents, index, lineNumber)) {
-                index += 2;
                 continue;
             }
+            
             if (handleAssignmentOrEqualityOperator(fileContents, index, lineNumber)) {
-                index += 2;
                 continue;
             }
+            
             if (handleNegationOrInequalityOperator(fileContents, index, lineNumber)) {
-                index += 2;
                 continue;
             }
+            
             System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
             hasError = true;
             index++;
         }
+        
         System.out.println("EOF  null");
         System.exit(hasError ? 65 : 0);
     }
@@ -156,15 +173,19 @@ public class Main {
         char c2 = fileContents.charAt(index + 1);
         if (c1 == '<' && c2 == '=') {
             System.out.println("LESS_EQUAL <= null");
+            index += 2;
             return true;
         } else if (c1 == '>' && c2 == '=') {
             System.out.println("GREATER_EQUAL >= null");
+            index += 2;
             return true;
         } else if (c1 == '<') {
             System.out.println("LESS < null");
+            index++;
             return true;
         } else if (c1 == '>') {
             System.out.println("GREATER > null");
+            index++;
             return true;
         }
         return false;
