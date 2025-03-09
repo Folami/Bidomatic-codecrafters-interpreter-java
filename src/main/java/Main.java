@@ -42,7 +42,28 @@ public class Main {
                     continue;
                 }
             }
-
+            // Handle single-character tokens
+            if ("(){}*+-.,;".indexOf(ch) != -1) {
+                handleSingleCharacterToken(ch);
+                index++;
+                continue;
+            }
+            if (Character.isWhitespace(ch)) {
+                index++;
+                continue;
+            }
+            if (ch == '"') {
+                index = handleStringLiteral(fileContents, index, lineNumber);
+                continue;
+            }
+            if (Character.isDigit(ch)) {
+                index = handleNumberLiteral(fileContents, index);
+                continue;
+            }
+            if (Character.isLetter(ch) || ch == '_') {
+                index = handleIdentifier(fileContents, index);
+                continue;
+            }
             // Handle multi-character tokens, returning characters consumed
             int consumed = handleRelationalOperator(fileContents, index, lineNumber);
             if (consumed > 0) {
@@ -59,34 +80,6 @@ public class Main {
                 index += consumed;
                 continue;
             }
-
-            // Handle single-character tokens
-            if ("(){}*+-.,;".indexOf(ch) != -1) {
-                handleSingleCharacterToken(ch);
-                index++;
-                continue;
-            }
-
-            if (Character.isWhitespace(ch)) {
-                index++;
-                continue;
-            }
-
-            if (ch == '"') {
-                index = handleStringLiteral(fileContents, index, lineNumber);
-                continue;
-            }
-
-            if (Character.isDigit(ch)) {
-                index = handleNumberLiteral(fileContents, index);
-                continue;
-            }
-
-            if (Character.isLetter(ch) || ch == '_') {
-                index = handleIdentifier(fileContents, index);
-                continue;
-            }
-
             // Handle invalid characters
             System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
             hasError = true;
