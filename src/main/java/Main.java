@@ -42,13 +42,11 @@ public class Main {
                     continue;
                 }
             }
-
             if ("(){}*+-.,;".indexOf(ch) != -1) {
                 handleSingleCharacterToken(ch);
                 index++;
                 continue;
             }
-
             if (Character.isWhitespace(ch)) {
                 index++;
                 continue;
@@ -58,40 +56,32 @@ public class Main {
                 index = handleStringLiteral(fileContents, index, lineNumber);
                 continue;
             }
-
             if (Character.isDigit(ch)) {
                 index = handleNumberLiteral(fileContents, index);
                 continue;
             }
-
             if (Character.isLetter(ch) || ch == '_') {
                 index = handleIdentifier(fileContents, index);
                 continue;
             }
-
-
             // Handle relational operators before reporting unexpected characters
             if (handleRelationalOperator(fileContents, index, lineNumber)) {
                 index += 2; // Advance index past the 2-char token
                 continue;
             }
-
             if (handleAssignmentOrEqualityOperator(fileContents, index, lineNumber)) {
                 index += 2; // Move index past 2-char token
                 continue;
             }
-
             if (handleNegationOrInequalityOperator(fileContents, index, lineNumber)) {
                 index += 2; // Move index past 2-char token
                 continue;
             }
-
             // If none of the above matched, it's an unexpected character
             System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
             hasError = true;
             index++;
         }
-
         System.out.println("EOF  null");
         System.exit(hasError ? 65 : 0);
     }
