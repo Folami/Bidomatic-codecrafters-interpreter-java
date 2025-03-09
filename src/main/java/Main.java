@@ -36,35 +36,61 @@ public class Main {
                 index++;
                 continue;
             }
-            if (ch == '/' && index + 1 < fileContents.length() && fileContents.charAt(index + 1) == '/') {
-                index = handleComment(fileContents, index);
-                continue;
+            if (ch == '/') { // Handle comments first
+                if (index + 1 < fileContents.length() && fileContents.charAt(index + 1) == '/') {
+                    index = handleComment(fileContents, index);
+                    continue;
+                }
             }
-            if ("(){}*+-.,;".indexOf(ch) != -1) {
-                handleSingleCharacterToken(ch);
+
+            if (handleSingleCharacterToken(ch)) {
                 index++;
                 continue;
             }
+
             if (Character.isWhitespace(ch)) {
                 index++;
                 continue;
             }
+
             if (ch == '"') {
                 index = handleStringLiteral(fileContents, index, lineNumber);
                 continue;
             }
+
             if (Character.isDigit(ch)) {
                 index = handleNumberLiteral(fileContents, index);
                 continue;
             }
+
             if (Character.isLetter(ch) || ch == '_') {
                 index = handleIdentifier(fileContents, index);
                 continue;
             }
+
+
+            // Handle relational operators before reporting unexpected characters
+            if (handleRelationalOperator(fileContents, index, lineNumber)) {
+                index += 2; // Advance index past the 2-char token
+                continue;
+            }
+
+            if (handleAssignmentOrEqualityOperator(fileContents, index, lineNumber)) {
+                index += 2; // Move index past 2-char token
+                continue;
+            }
+
+            if (handleNegationOrInequalityOperator(fileContents, index, lineNumber)) {
+                index += 2; // Move index past 2-char token
+                continue;
+            }
+
+            // If none of the above matched, it's an unexpected character
             System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
             hasError = true;
             index++;
         }
+
         System.out.println("EOF  null");
         System.exit(hasError ? 65 : 0);
     }
@@ -135,4 +161,60 @@ public class Main {
         System.out.println("IDENTIFIER " + identifier + " null");
         return index;
     }
+
+    private static boolean handleRelationalOperator(String fileContents, int index, int lineNumber) {
+        if (index + 1 >= fileContents.length()) {
+            return false;
+        }
+        char c1 = fileContents.charAt(index);
+        char c2 = fileContents.charAt(index + 1);
+        if (c1 == '<' && c2 == '=') {
+            System.out.println("LESS_EQUAL <= null");
+            return true;
+        } else if (c1 == '>' && c2 == '=') {
+            System.out.println("GREATER_EQUAL >= null");
+            return true;
+        } else if (c1 == '<') {
+            System.out.println("LESS < null");
+            return true;
+        } else if (c1 == '>') {
+            System.out.println("GREATER > null");
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean handleAssignmentOrEqualityOperator(String fileContents, int index, int lineNumber) {
+        if (index + 1 >= fileContents.length()) {
+            return false;
+        }
+        char c1 = fileContents.charAt(index);
+        char c2 = fileContents.charAt(index + 1);
+        if (c1 == '=' && c2 == '=') {
+            System.out.println("EQUAL == null");
+            return true;
+        } else if (c1 == '=') {
+            System.out.println("ASSIGN = null");
+            return true;
+        }
+        return false;
+    }
+
+
+    private static boolean handleNegationOrInequalityOperator(String fileContents, int index, int lineNumber) {
+        if (index + 1 >= fileContents.length()) {
+            return false;
+        }
+        char c1 = fileContents.charAt(index);
+        char c2 = fileContents.charAt(index + 1);
+        if (c1 == '!' && c2 == '=') {
+            System.out.println("NOT_EQUAL != null");
+            return true;
+        } else if (c1 == '!') {
+            System.out.println("BANG ! null");
+            return true;
+        }
+        return false;
+    }
 }
+
