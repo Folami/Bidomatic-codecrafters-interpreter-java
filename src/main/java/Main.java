@@ -70,7 +70,7 @@ public class Main {
                 index += consumed;  // Increment by actual chars consumed
                 continue;
             }
-            consumed = int(handleAssignmentOrEqualityOperator(fileContents, index, lineNumber));
+            consumed = Boolean.hashCode(handleAssignmentOrEqualityOperator(fileContents, index, lineNumber));
             if (consumed > 0) {
                 index += consumed;
                 continue;
