@@ -43,21 +43,24 @@ public class Main {
                 }
             }
 
-            // Prioritize longer tokens (multi-character lexemes) first
-            if (handleRelationalOperator(fileContents, index, lineNumber)) {
-                index += 2;
+            // Handle multi-character tokens, returning characters consumed
+            int consumed = handleRelationalOperator(fileContents, index, lineNumber);
+            if (consumed > 0) {
+                index += consumed;  // Increment by actual chars consumed
                 continue;
             }
-            if (handleAssignmentOrEqualityOperator(fileContents, index, lineNumber)) {
-                index += 2;
+            consumed = handleAssignmentOrEqualityOperator(fileContents, index, lineNumber);
+            if (consumed > 0) {
+                index += consumed;
                 continue;
             }
-            if (handleNegationOrInequalityOperator(fileContents, index, lineNumber)) {
-                index += 2;
+            consumed = handleNegationOrInequalityOperator(fileContents, index, lineNumber);
+            if (consumed > 0) {
+                index += consumed;
                 continue;
             }
 
-            // Then handle single-character tokens
+            // Handle single-character tokens
             if ("(){}*+-.,;".indexOf(ch) != -1) {
                 handleSingleCharacterToken(ch);
                 index++;
@@ -160,26 +163,37 @@ public class Main {
         return index;
     }
 
-    private static boolean handleRelationalOperator(String fileContents, int index, int lineNumber) {
+    private static int handleRelationalOperator(String fileContents, int index, int lineNumber) {
+        /*
+         * Handles relational operators (<, >, <=, >=).
+         * Returns: Number of characters consumed (1 or 2), or 0 if no match.
+         */
         if (index + 1 >= fileContents.length()) {
-            return false;
+            if (fileContents.charAt(index) == '<') {
+                System.out.println("LESS < null");
+                return 1;
+            } else if (fileContents.charAt(index) == '>') {
+                System.out.println("GREATER > null");
+                return 1;
+            }
+            return 0;
         }
         char c1 = fileContents.charAt(index);
         char c2 = fileContents.charAt(index + 1);
         if (c1 == '<' && c2 == '=') {
             System.out.println("LESS_EQUAL <= null");
-            return true;
+            return 2;
         } else if (c1 == '>' && c2 == '=') {
             System.out.println("GREATER_EQUAL >= null");
-            return true;
+            return 2;
         } else if (c1 == '<') {
             System.out.println("LESS < null");
-            return true;
+            return 1;
         } else if (c1 == '>') {
             System.out.println("GREATER > null");
-            return true;
+            return 1;
         }
-        return false;
+        return 0;
     }
 
     private static boolean handleAssignmentOrEqualityOperator(String fileContents, int index, int lineNumber) {
