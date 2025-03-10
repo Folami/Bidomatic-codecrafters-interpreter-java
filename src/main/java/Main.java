@@ -57,7 +57,7 @@ public class Main {
             // Keywords.
             AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR,
             PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
-
+            // End of file.
             EOF
         }
 
@@ -130,25 +130,11 @@ public class Main {
                 case '+': addToken(TokenType.PLUS); break;
                 case ';': addToken(TokenType.SEMICOLON); break;
                 case '*': addToken(TokenType.STAR); break;
-                case '!':
-                    addToken(match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
-                    break;
-                case '=':
-                    addToken(match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
-                    break;
-                case '<':
-                    addToken(match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
-                    break;
-                case '>':
-                    addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
-                    break;
-                case '/':
-                    if (match('/')) {
-                        while (peek() != '\n' && !isAtEnd()) advance();
-                    } else {
-                        addToken(TokenType.SLASH);
-                    }
-                    break;
+                case '!': handleBang(); break;
+                case '=': handleEqual(); break;
+                case '<': handleLess(); break;
+                case '>': handleGreater(); break;
+                case '/': handleSlash(); break;
                 case ' ':
                 case '\r':
                 case '\t':
@@ -156,9 +142,7 @@ public class Main {
                 case '\n':
                     line++;
                     break;
-                case '"':
-                    string();
-                    break;
+                case '"': string(); break;
                 default:
                     if (isDigit(c)) {
                         number();
@@ -168,6 +152,30 @@ public class Main {
                         error(line, "Unexpected character: " + c);
                     }
                     break;
+            }
+        }
+
+        private static void handleBang() {
+            addToken(match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
+        }
+
+        private static void handleEqual() {
+            addToken(match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
+        }
+
+        private static void handleLess() {
+            addToken(match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
+        }
+
+        private static void handleGreater() {
+            addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
+        }
+
+        private static void handleSlash() {
+            if (match('/')) {
+                while (peek() != '\n' && !isAtEnd()) advance();
+            } else {
+                addToken(TokenType.SLASH);
             }
         }
 
