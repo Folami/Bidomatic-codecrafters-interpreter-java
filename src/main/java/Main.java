@@ -27,7 +27,8 @@ public class Main {
             LoxScanner scanner = new LoxScanner(fileContents);
             scanner.scanTokens();
         } else {
-            System.out.println("EOF  null"); // Placeholder, remove this line when implementing the scanner
+            System.out.println("EOF  null");
+            System.exit(hasError ? 65 : 0);
         }
     }
 
