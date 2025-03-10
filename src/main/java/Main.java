@@ -39,8 +39,25 @@ public class Main {
         private int line = 1;
         static boolean hadError = false;
 
+        enum TokenType {
+            // Single-character tokens.
+            LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
+            COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
+            // One or two character tokens.
+            BANG, BANG_EQUAL,
+            EQUAL, EQUAL_EQUAL,
+            GREATER, GREATER_EQUAL,
+            LESS, LESS_EQUAL,
+            // Literals.
+            IDENTIFIER, STRING, NUMBER,
+            // Keywords.
+            AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR,
+            PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
+
+            EOF
+        }
+
         private static final Map<String, TokenType> keywords;
-        
         static {
             keywords = new HashMap<>();
             keywords.put("and",    AND);
@@ -59,24 +76,6 @@ public class Main {
             keywords.put("true",   TRUE);
             keywords.put("var",    VAR);
             keywords.put("while",  WHILE);
-        }
-
-        enum TokenType {
-            // Single-character tokens.
-            LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
-            COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
-            // One or two character tokens.
-            BANG, BANG_EQUAL,
-            EQUAL, EQUAL_EQUAL,
-            GREATER, GREATER_EQUAL,
-            LESS, LESS_EQUAL,
-            // Literals.
-            IDENTIFIER, STRING, NUMBER,
-            // Keywords.
-            AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR,
-            PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
-
-            EOF
         }
 
         class Token {
