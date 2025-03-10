@@ -23,7 +23,10 @@ public class Main {
         }
         if (fileContents.length() > 0) {
             LoxScanner scanner = new LoxScanner(fileContents);
-            scanner.scanTokens();
+            List<LoxScanner.Token> tokens = scanner.scanTokens();
+            for (LoxScanner.Token token : tokens) {
+                System.out.println(token);
+            }
             if (LoxScanner.hadError) {
                 System.exit(65);
             }
@@ -101,12 +104,13 @@ public class Main {
             this.source = source;
         }
 
-        private static void scanTokens() {
+        private static List<Token> scanTokens() {
             while (!isAtEnd()) {
                 start = current;
                 scanToken();
             }
             tokens.add(new Token(TokenType.EOF, "", null, line));
+            return tokens;
         }
 
         private static boolean isAtEnd() {
