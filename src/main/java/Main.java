@@ -32,7 +32,7 @@ public class Main {
     }
 
     private static class LoxScanner {
-        private static final String source;
+        private static String source;
         private static final List<Token> tokens = new ArrayList<>();
         private static int start = 0;
         private static int current = 0;
