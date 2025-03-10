@@ -1,14 +1,12 @@
 import java.io.*;
-import java.nio.*;
 import java.nio.file.*;
 import java.util.*;
-
 
 public class Main {
     public static void main(String[] args) {
         if (args.length < 2) {
-        System.err.println("Usage: ./your_program.sh tokenize <filename>");
-        System.exit(1);
+            System.err.println("Usage: ./your_program.sh tokenize <filename>");
+            System.exit(1);
         }
         String command = args[0];
         String filename = args[1];
@@ -103,7 +101,7 @@ public class Main {
             this.source = source;
         }
 
-        private static void scanTokens()  {
+        private static void scanTokens() {
             while (!isAtEnd()) {
                 start = current;
                 scanToken();
@@ -111,7 +109,6 @@ public class Main {
             tokens.add(new Token(TokenType.EOF, "", null, line));
         }
 
-        //> is-at-end
         private static boolean isAtEnd() {
             return current >= source.length();
         }
@@ -128,8 +125,7 @@ public class Main {
                 case '-': addToken(TokenType.MINUS); break;
                 case '+': addToken(TokenType.PLUS); break;
                 case ';': addToken(TokenType.SEMICOLON); break;
-                case '*': addToken(TokenType.STAR); break; // [slash]
-                //> two-char-tokens
+                case '*': addToken(TokenType.STAR); break;
                 case '!':
                     addToken(match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
                     break;
@@ -142,45 +138,35 @@ public class Main {
                 case '>':
                     addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
                     break;
-                //> slash
                 case '/':
                     if (match('/')) {
-                        // A comment goes until the end of the line.
-                        while (peek() != '\n' && !isAtEnd()) 
-                            advance();
+                        while (peek() != '\n' && !isAtEnd()) advance();
                     } else {
                         addToken(TokenType.SLASH);
                     }
                     break;
-                //> whitespace
                 case ' ':
                 case '\r':
                 case '\t':
-                    // Ignore whitespace.
                     break;
                 case '\n':
                     line++;
                     break;
-                //> string-start
-                case '"': 
-                    string(); 
+                case '"':
+                    string();
                     break;
-                //> char-error
                 default:
-                    //> digit-start
                     if (isDigit(c)) {
                         number();
-                    //> identifier-start
                     } else if (isAlpha(c)) {
                         identifier();
                     } else {
-                        LoxScanner.error(line, "Unexpected character.");
+                        error(line, "Unexpected character: " + c);
                     }
                     break;
             }
         }
 
-        //> advance-and-add-token
         private static char advance() {
             return source.charAt(current++);
         }
@@ -193,95 +179,60 @@ public class Main {
             String text = source.substring(start, current);
             tokens.add(new Token(type, text, literal, line));
         }
-        //< advance-and-add-token
 
-        //> match
         private static boolean match(char expected) {
-            if (isAtEnd()) 
-                return false;
-
-            if (source.charAt(current) != expected) 
-                return false;
-
+            if (isAtEnd()) return false;
+            if (source.charAt(current) != expected) return false;
             current++;
             return true;
         }
 
-        //> peek
         private static char peek() {
-            if (isAtEnd()) 
-                return '\0';
-
+            if (isAtEnd()) return '\0';
             return source.charAt(current);
         }
 
-        //> string
         private static void string() {
             while (peek() != '"' && !isAtEnd()) {
-                if (peek() == '\n') 
-                        line++;
+                if (peek() == '\n') line++;
                 advance();
             }
             if (isAtEnd()) {
-                LoxScanner.error(line, "Unterminated string.");
+                error(line, "Unterminated string.");
                 return;
             }
-            // The closing ".
             advance();
-            // Trim the surrounding quotes.
             String value = source.substring(start + 1, current - 1);
             addToken(TokenType.STRING, value);
         }
 
-        //> is-digit
         private static boolean isDigit(char c) {
             return c >= '0' && c <= '9';
         }
 
-        //> number
         private static void number() {
-            while (isDigit(peek())) 
-                advance();
-            // Look for a fractional part.
+            while (isDigit(peek())) advance();
             if (peek() == '.' && isDigit(peekNext())) {
-                // Consume the "."
                 advance();
-                while (isDigit(peek())) 
-                    advance();
+                while (isDigit(peek())) advance();
             }
-            addToken(
-                TokenType.NUMBER,
-                Double.parseDouble(source.substring(
-                    start, 
-                    current
-                ))
-            );
+            addToken(TokenType.NUMBER, Double.parseDouble(source.substring(start, current)));
         }
 
-        //> peek-next
         private static char peekNext() {
-            if (current + 1 >= source.length()) 
-                return '\0';
-
+            if (current + 1 >= source.length()) return '\0';
             return source.charAt(current + 1);
         }
 
-        //> is-alpha
         private static boolean isAlpha(char c) {
-            return (c >= 'a' && c <= 'z') ||
-                (c >= 'A' && c <= 'Z') ||
-                    c == '_';
+            return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
         }
 
-        //> identifier
         private static void identifier() {
-            while (isAlphaNumeric(peek())) 
-                advance();
-            //Scanning identifier < Scanning keyword-type
+            while (isAlphaNumeric(peek())) advance();
             String text = source.substring(start, current);
             TokenType type = keywords.get(text);
-            if (type == null) 
-                type = TokenType.IDENTIFIER;
+            if (type == null) type = TokenType.IDENTIFIER;
             addToken(type);
         }
 
@@ -294,10 +245,8 @@ public class Main {
         }
 
         private static void report(int line, String where, String message) {
-            System.err.println(
-                "[line " + line + "] Error" + where + ": " + message
-            );
+            System.err.println("[line " + line + "] Error" + where + ": " + message);
             hadError = true;
         }
-    } 
+    }
 }
