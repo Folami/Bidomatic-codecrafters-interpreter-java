@@ -60,7 +60,7 @@ public class Main {
         private static final Map<String, TokenType> keywords;
         static {
             keywords = new HashMap<>();
-            keywords.put("and",    AND);
+            keywords.put("and", TokenType.AND);
             keywords.put("class",  CLASS);
             keywords.put("else",   ELSE);
             keywords.put("false",  FALSE);
