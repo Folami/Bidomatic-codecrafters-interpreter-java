@@ -109,11 +109,11 @@ public class Main {
         }
 
         //> is-at-end
-        private boolean isAtEnd() {
+        private static boolean isAtEnd() {
             return current >= source.length();
         }
 
-        private void scanToken() {
+        private static void scanToken() {
             char c = advance();
             switch (c) {
                 case '(': addToken(LEFT_PAREN); break;
@@ -178,22 +178,22 @@ public class Main {
         }
 
         //> advance-and-add-token
-        private char advance() {
+        private static char advance() {
             return source.charAt(current++);
         }
 
-        private void addToken(TokenType type) {
+        private static void addToken(TokenType type) {
             addToken(type, null);
         }
 
-        private void addToken(TokenType type, Object literal) {
+        private static void addToken(TokenType type, Object literal) {
             String text = source.substring(start, current);
             tokens.add(new Token(type, text, literal, line));
         }
         //< advance-and-add-token
 
         //> match
-        private boolean match(char expected) {
+        private static boolean match(char expected) {
             if (isAtEnd()) 
                 return false;
 
@@ -205,7 +205,7 @@ public class Main {
         }
 
         //> peek
-        private char peek() {
+        private static char peek() {
             if (isAtEnd()) 
                 return '\0';
 
@@ -213,7 +213,7 @@ public class Main {
         }
 
         //> string
-        private void string() {
+        private static void string() {
             while (peek() != '"' && !isAtEnd()) {
                 if (peek() == '\n') 
                         line++;
@@ -231,12 +231,12 @@ public class Main {
         }
 
         //> is-digit
-        private boolean isDigit(char c) {
+        private static boolean isDigit(char c) {
             return c >= '0' && c <= '9';
         }
 
         //> number
-        private void number() {
+        private static void number() {
             while (isDigit(peek())) 
                 advance();
             // Look for a fractional part.
@@ -256,7 +256,7 @@ public class Main {
         }
 
         //> peek-next
-        private char peekNext() {
+        private static char peekNext() {
             if (current + 1 >= source.length()) 
                 return '\0';
 
@@ -264,14 +264,14 @@ public class Main {
         }
 
         //> is-alpha
-        private boolean isAlpha(char c) {
+        private static boolean isAlpha(char c) {
             return (c >= 'a' && c <= 'z') ||
                 (c >= 'A' && c <= 'Z') ||
                     c == '_';
         }
 
         //> identifier
-        private void identifier() {
+        private static void identifier() {
             while (isAlphaNumeric(peek())) 
                 advance();
             //Scanning identifier < Scanning keyword-type
@@ -282,11 +282,11 @@ public class Main {
             addToken(type);
         }
 
-        private boolean isAlphaNumeric(char c) {
+        private static boolean isAlphaNumeric(char c) {
             return isAlpha(c) || isDigit(c);
         }
 
-        static void error(int line, String message) {
+        private static void error(int line, String message) {
             report(line, "", message);
         }
 
