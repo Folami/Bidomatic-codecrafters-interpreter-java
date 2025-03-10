@@ -1,13 +1,15 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Scanner;
+
 
 public class Main {
     public static void main(String[] args) {
-        System.err.println("Logs from your program will appear here!");
         if (args.length < 2) {
-            System.err.println("Usage: ./your_program.sh tokenize <filename>");
-            System.exit(1);
+        System.err.println("Usage: ./your_program.sh tokenize <filename>");
+        System.exit(1);
         }
         String command = args[0];
         String filename = args[1];
@@ -22,213 +24,279 @@ public class Main {
             System.err.println("Error reading file: " + e.getMessage());
             System.exit(1);
         }
-        tokenize(fileContents);
-    }
-
-    private static void tokenize(String fileContents) {
-        boolean hasError = false;
-        int lineNumber = 1;
-        int index = 0;
-        while (index < fileContents.length()) {
-            char ch = fileContents.charAt(index);
-            if (ch == '\n') {
-                lineNumber++;
-                index++;
-                continue;
-            }
-            if (ch == '/' && index + 1 < fileContents.length() && fileContents.charAt(index + 1) == '/') {
-                index = handleComment(fileContents, index);
-                continue;
-            }
-            if ("(){}*+-.,;".indexOf(ch) != -1) {
-                handleSingleCharacterToken(ch);
-                index++;
-                continue;
-            }
-            if (Character.isWhitespace(ch)) {
-                index++;
-                continue;
-            }
-            if (ch == '"') {
-                index = handleStringLiteral(fileContents, index, lineNumber);
-                continue;
-            }
-            if (Character.isDigit(ch)) {
-                index = handleNumberLiteral(fileContents, index);
-                continue;
-            }
-            if (Character.isLetter(ch) || ch == '_') {
-                index = handleIdentifier(fileContents, index);
-                continue;
-            }
-            int consumed = handleRelationalOperator(fileContents, index, lineNumber);
-            if (consumed > 0) {
-                index += consumed;
-                continue;
-            }
-            consumed = handleAssignmentOrEqualityOperator(fileContents, index, lineNumber);
-            if (consumed > 0) {
-                index += consumed;
-                continue;
-            }
-            consumed = handleNegationOrInequalityOperator(fileContents, index, lineNumber);
-            if (consumed > 0) {
-                index += consumed;
-                continue;
-            }
-            System.err.println("[line " + lineNumber + "] Error: Unexpected character: " + ch);
-            hasError = true;
-            index++;
-        }
-        System.out.println("EOF  null");
-        System.exit(hasError ? 65 : 0);
-    }
-
-    private static int handleComment(String fileContents, int index) {
-        while (index < fileContents.length() && fileContents.charAt(index) != '\n') {
-            index++;
-        }
-        return index;
-    }
-
-    private static void handleSingleCharacterToken(char ch) {
-        switch (ch) {
-            case '(' -> System.out.println("LEFT_PAREN ( null");
-            case ')' -> System.out.println("RIGHT_PAREN ) null");
-            case '{' -> System.out.println("LEFT_BRACE { null");
-            case '}' -> System.out.println("RIGHT_BRACE } null");
-            case '*' -> System.out.println("STAR * null");
-            case '+' -> System.out.println("PLUS + null");
-            case '-' -> System.out.println("MINUS - null");
-            case ',' -> System.out.println("COMMA , null");
-            case '.' -> System.out.println("DOT . null");
-            case ';' -> System.out.println("SEMICOLON ; null");
-        }
-    }
-
-    private static int handleStringLiteral(String fileContents, int index, int lineNumber) {
-        StringBuilder stringLiteral = new StringBuilder();
-        index++; // Skip opening quote
-        boolean unterminated = true;
-        while (index < fileContents.length()) {
-            char ch = fileContents.charAt(index);
-            if (ch == '"') {
-                unterminated = false;
-                break;
-            }
-            if (ch == '\n') lineNumber++;
-            stringLiteral.append(ch);
-            index++;
-        }
-        if (unterminated) {
-            System.err.println("[line " + lineNumber + "] Error: Unterminated string.");
+        if (fileContents.length() > 0) {
+            LoxScanner scanner = new LoxScanner(fileContents);
+            scanner.scanTokens();
         } else {
-            System.out.println("STRING \"" + stringLiteral + "\" null");
-            index++; // Skip closing quote
+            System.out.println("EOF  null"); // Placeholder, remove this line when implementing the scanner
         }
-        return index;
     }
 
-    private static int handleNumberLiteral(String fileContents, int index) {
-        StringBuilder numberLiteral = new StringBuilder();
-        while (index < fileContents.length() && Character.isDigit(fileContents.charAt(index))) {
-            numberLiteral.append(fileContents.charAt(index));
-            index++;
-        }
-        System.out.println("NUMBER " + numberLiteral + " null");
-        return index;
-    }
+    private static class LoxScanner {
+        private final String source;
+        private final List<Token> tokens = new ArrayList<>();
+        private int start = 0;
+        private int current = 0;
+        private int line = 1;
+        static boolean hadError = false;
 
-    private static int handleIdentifier(String fileContents, int index) {
-        StringBuilder identifier = new StringBuilder();
-        while (index < fileContents.length() &&
-                (Character.isLetterOrDigit(fileContents.charAt(index)) ||
-                        fileContents.charAt(index) == '_')) {
-            identifier.append(fileContents.charAt(index));
-            index++;
+        private static final Map<String, TokenType> keywords;
+        
+        static {
+            keywords = new HashMap<>();
+            keywords.put("and",    AND);
+            keywords.put("class",  CLASS);
+            keywords.put("else",   ELSE);
+            keywords.put("false",  FALSE);
+            keywords.put("for",    FOR);
+            keywords.put("fun",    FUN);
+            keywords.put("if",     IF);
+            keywords.put("nil",    NIL);
+            keywords.put("or",     OR);
+            keywords.put("print",  PRINT);
+            keywords.put("return", RETURN);
+            keywords.put("super",  SUPER);
+            keywords.put("this",   THIS);
+            keywords.put("true",   TRUE);
+            keywords.put("var",    VAR);
+            keywords.put("while",  WHILE);
         }
-        System.out.println("IDENTIFIER " + identifier + " null");
-        return index;
-    }
 
-    private static int handleRelationalOperator(String fileContents, int index, int lineNumber) {
-        /*
-         * Handles relational operators (<, >, <=, >=).
-         * Returns: Number of characters consumed (1 or 2), or 0 if no match.
-         */
-        if (index + 1 >= fileContents.length()) {
-            if (fileContents.charAt(index) == '<') {
-                System.out.println("LESS < null");
-                return 1;
-            } else if (fileContents.charAt(index) == '>') {
-                System.out.println("GREATER > null");
-                return 1;
+        enum TokenType {
+            // Single-character tokens.
+            LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
+            COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
+            // One or two character tokens.
+            BANG, BANG_EQUAL,
+            EQUAL, EQUAL_EQUAL,
+            GREATER, GREATER_EQUAL,
+            LESS, LESS_EQUAL,
+            // Literals.
+            IDENTIFIER, STRING, NUMBER,
+            // Keywords.
+            AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR,
+            PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
+
+            EOF
+        }
+
+        class Token {
+            final TokenType type;
+            final String lexeme;
+            final Object literal;
+            final int line;
+
+            Token(TokenType type, String lexeme, Object literal, int line) {
+                this.type = type;
+                this.lexeme = lexeme;
+                this.literal = literal;
+                this.line = line;
             }
-            return 0;
-        }
-        char c1 = fileContents.charAt(index);
-        char c2 = fileContents.charAt(index + 1);
-        if (c1 == '<' && c2 == '=') {
-            System.out.println("LESS_EQUAL <= null");
-            return 2;
-        } else if (c1 == '>' && c2 == '=') {
-            System.out.println("GREATER_EQUAL >= null");
-            return 2;
-        } else if (c1 == '<') {
-            System.out.println("LESS < null");
-            return 1;
-        } else if (c1 == '>') {
-            System.out.println("GREATER > null");
-            return 1;
-        }
-        return 0;
-    }
 
-    private static int handleAssignmentOrEqualityOperator(String fileContents, int index, int lineNumber) {
-        /*
-         * Handles assignment and equality operators (=, ==).
-         * Returns: Number of characters consumed (1 or 2), or 0 if no match.
-         */
-        if (index + 1 >= fileContents.length()) {
-            if (fileContents.charAt(index) == '=') {
-                System.out.println("EQUAL = null");
-                return 1;
+            public String toString() {
+                return type + " " + lexeme + " " + literal;
             }
-            return 0;
         }
-        char c1 = fileContents.charAt(index);
-        char c2 = fileContents.charAt(index + 1);
-        if (c1 == '=' && c2 == '=') {
-            System.out.println("EQUAL_EQUAL == null");
-            return 2;
-        } else if (c1 == '=') {
-            System.out.println("EQUAL = null");
-            return 1;
-        }
-        return 0;
-    }
 
-    private static int handleNegationOrInequalityOperator(String fileContents, int index, int lineNumber) {
-        /*
-         * Handles negation and inequality operators (!, !=).
-         * Returns: Number of characters consumed (1 or 2), or 0 if no match.
-         */
-        if (index + 1 >= fileContents.length()) {
-            if (fileContents.charAt(index) == '!') {
-                System.out.println("BANG ! null");
-                return 1;
+        LoxScanner(String source) {
+            this.source = source;
+        }
+
+        private static void scanTokens()  {
+            while (!isAtEnd()) {
+                start = current;
+                scanToken();
             }
-            return 0;
+            tokens.add(new Token(TokenType.EOF, "", null, line));
         }
-        char c1 = fileContents.charAt(index);
-        char c2 = fileContents.charAt(index + 1);
-        if (c1 == '!' && c2 == '=') {
-            System.out.println("BANG_EQUAL != null");
-            return 2;
-        } else if (c1 == '!') {
-            System.out.println("BANG ! null");
-            return 1;
+
+        //> is-at-end
+        private boolean isAtEnd() {
+            return current >= source.length();
         }
-        return 0;
-    }
+
+        private void scanToken() {
+            char c = advance();
+            switch (c) {
+                case '(': addToken(LEFT_PAREN); break;
+                case ')': addToken(RIGHT_PAREN); break;
+                case '{': addToken(LEFT_BRACE); break;
+                case '}': addToken(RIGHT_BRACE); break;
+                case ',': addToken(COMMA); break;
+                case '.': addToken(DOT); break;
+                case '-': addToken(MINUS); break;
+                case '+': addToken(PLUS); break;
+                case ';': addToken(SEMICOLON); break;
+                case '*': addToken(STAR); break; // [slash]
+                //> two-char-tokens
+                case '!':
+                    addToken(match('=') ? BANG_EQUAL : BANG);
+                    break;
+                case '=':
+                    addToken(match('=') ? EQUAL_EQUAL : EQUAL);
+                    break;
+                case '<':
+                    addToken(match('=') ? LESS_EQUAL : LESS);
+                    break;
+                case '>':
+                    addToken(match('=') ? GREATER_EQUAL : GREATER);
+                    break;
+                //> slash
+                case '/':
+                    if (match('/')) {
+                        // A comment goes until the end of the line.
+                        while (peek() != '\n' && !isAtEnd()) 
+                            advance();
+                    } else {
+                        addToken(SLASH);
+                    }
+                    break;
+                //> whitespace
+                case ' ':
+                case '\r':
+                case '\t':
+                    // Ignore whitespace.
+                    break;
+                case '\n':
+                    line++;
+                    break;
+                //> string-start
+                case '"': 
+                    string(); 
+                    break;
+                //> char-error
+                default:
+                    //> digit-start
+                    if (isDigit(c)) {
+                        number();
+                    //> identifier-start
+                    } else if (isAlpha(c)) {
+                        identifier();
+                    } else {
+                        LoxScanner.error(line, "Unexpected character.");
+                    }
+                    break;
+            }
+        }
+
+        //> advance-and-add-token
+        private char advance() {
+            return source.charAt(current++);
+        }
+
+        private void addToken(TokenType type) {
+            addToken(type, null);
+        }
+
+        private void addToken(TokenType type, Object literal) {
+            String text = source.substring(start, current);
+            tokens.add(new Token(type, text, literal, line));
+        }
+        //< advance-and-add-token
+
+        //> match
+        private boolean match(char expected) {
+            if (isAtEnd()) 
+                return false;
+
+            if (source.charAt(current) != expected) 
+                return false;
+
+            current++;
+            return true;
+        }
+
+        //> peek
+        private char peek() {
+            if (isAtEnd()) 
+                return '\0';
+
+            return source.charAt(current);
+        }
+
+        //> string
+        private void string() {
+            while (peek() != '"' && !isAtEnd()) {
+                if (peek() == '\n') 
+                        line++;
+                advance();
+            }
+            if (isAtEnd()) {
+                LoxScanner.error(line, "Unterminated string.");
+                return;
+            }
+            // The closing ".
+            advance();
+            // Trim the surrounding quotes.
+            String value = source.substring(start + 1, current - 1);
+            addToken(STRING, value);
+        }
+
+        //> is-digit
+        private boolean isDigit(char c) {
+            return c >= '0' && c <= '9';
+        }
+
+        //> number
+        private void number() {
+            while (isDigit(peek())) 
+                advance();
+            // Look for a fractional part.
+            if (peek() == '.' && isDigit(peekNext())) {
+                // Consume the "."
+                advance();
+                while (isDigit(peek())) 
+                    advance();
+            }
+            addToken(
+                NUMBER,
+                Double.parseDouble(source.substring(
+                    start, 
+                    current
+                ))
+            );
+        }
+
+        //> peek-next
+        private char peekNext() {
+            if (current + 1 >= source.length()) 
+                return '\0';
+
+            return source.charAt(current + 1);
+        }
+
+        //> is-alpha
+        private boolean isAlpha(char c) {
+            return (c >= 'a' && c <= 'z') ||
+                (c >= 'A' && c <= 'Z') ||
+                    c == '_';
+        }
+
+        //> identifier
+        private void identifier() {
+            while (isAlphaNumeric(peek())) 
+                advance();
+            //Scanning identifier < Scanning keyword-type
+            String text = source.substring(start, current);
+            TokenType type = keywords.get(text);
+            if (type == null) 
+                type = IDENTIFIER;
+            addToken(type);
+        }
+
+        private boolean isAlphaNumeric(char c) {
+            return isAlpha(c) || isDigit(c);
+        }
+
+        static void error(int line, String message) {
+            report(line, "", message);
+        }
+
+        private static void report(int line, String where, String message) {
+            System.err.println(
+                "[line " + line + "] Error" + where + ": " + message
+            );
+            hadError = true;
+        }
+    } 
 }
