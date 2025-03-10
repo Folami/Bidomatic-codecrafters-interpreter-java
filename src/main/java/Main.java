@@ -39,7 +39,7 @@ public class Main {
         private static int line = 1;
         private static boolean hadError = false;
 
-        static enum TokenType {
+        enum TokenType {
             // Single-character tokens.
             LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
             COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
@@ -78,7 +78,7 @@ public class Main {
             keywords.put("while", TokenType.WHILE);
         }
 
-        class Token {
+        private static class Token {
             final TokenType type;
             final String lexeme;
             final Object literal;
