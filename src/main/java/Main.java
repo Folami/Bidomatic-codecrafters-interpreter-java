@@ -227,7 +227,7 @@ public class Main {
             advance();
             // Trim the surrounding quotes.
             String value = source.substring(start + 1, current - 1);
-            addToken(STRING, value);
+            addToken(TokenType.STRING, value);
         }
 
         //> is-digit
@@ -247,7 +247,7 @@ public class Main {
                     advance();
             }
             addToken(
-                NUMBER,
+                TokenType.NUMBER,
                 Double.parseDouble(source.substring(
                     start, 
                     current
@@ -278,7 +278,7 @@ public class Main {
             String text = source.substring(start, current);
             TokenType type = keywords.get(text);
             if (type == null) 
-                type = IDENTIFIER;
+                type = TokenType.IDENTIFIER;
             addToken(type);
         }
 
