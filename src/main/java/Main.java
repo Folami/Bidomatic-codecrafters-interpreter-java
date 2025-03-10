@@ -28,7 +28,7 @@ public class Main {
             scanner.scanTokens();
         } else {
             System.out.println("EOF  null");
-            System.exit(hasError ? 65 : 0);
+            System.exit(65);
         }
     }
 
