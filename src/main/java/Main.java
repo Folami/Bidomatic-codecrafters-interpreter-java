@@ -32,12 +32,12 @@ public class Main {
     }
 
     private static class LoxScanner {
-        private final String source;
-        private final List<Token> tokens = new ArrayList<>();
-        private int start = 0;
-        private int current = 0;
-        private int line = 1;
-        static boolean hadError = false;
+        private static final String source;
+        private static final List<Token> tokens = new ArrayList<>();
+        private static int start = 0;
+        private static int current = 0;
+        private static int line = 1;
+        private static boolean hadError = false;
 
         enum TokenType {
             // Single-character tokens.
@@ -116,28 +116,28 @@ public class Main {
         private static void scanToken() {
             char c = advance();
             switch (c) {
-                case '(': addToken(LEFT_PAREN); break;
-                case ')': addToken(RIGHT_PAREN); break;
-                case '{': addToken(LEFT_BRACE); break;
-                case '}': addToken(RIGHT_BRACE); break;
-                case ',': addToken(COMMA); break;
-                case '.': addToken(DOT); break;
-                case '-': addToken(MINUS); break;
-                case '+': addToken(PLUS); break;
-                case ';': addToken(SEMICOLON); break;
-                case '*': addToken(STAR); break; // [slash]
+                case '(': addToken(TokenType.LEFT_PAREN); break;
+                case ')': addToken(TokenType.RIGHT_PAREN); break;
+                case '{': addToken(TokenType.LEFT_BRACE); break;
+                case '}': addToken(TokenType.RIGHT_BRACE); break;
+                case ',': addToken(TokenType.COMMA); break;
+                case '.': addToken(TokenType.DOT); break;
+                case '-': addToken(TokenType.MINUS); break;
+                case '+': addToken(TokenType.PLUS); break;
+                case ';': addToken(TokenType.SEMICOLON); break;
+                case '*': addToken(TokenType.STAR); break; // [slash]
                 //> two-char-tokens
                 case '!':
-                    addToken(match('=') ? BANG_EQUAL : BANG);
+                    addToken(match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
                     break;
                 case '=':
-                    addToken(match('=') ? EQUAL_EQUAL : EQUAL);
+                    addToken(match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
                     break;
                 case '<':
-                    addToken(match('=') ? LESS_EQUAL : LESS);
+                    addToken(match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
                     break;
                 case '>':
-                    addToken(match('=') ? GREATER_EQUAL : GREATER);
+                    addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
                     break;
                 //> slash
                 case '/':
@@ -146,7 +146,7 @@ public class Main {
                         while (peek() != '\n' && !isAtEnd()) 
                             advance();
                     } else {
-                        addToken(SLASH);
+                        addToken(TokenType.SLASH);
                     }
                     break;
                 //> whitespace
