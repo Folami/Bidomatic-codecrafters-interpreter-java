@@ -200,7 +200,7 @@ abstract class Expr {
 //< expr-unary
 //> expr-variable
   static class Variable extends Expr {
-    Variable(LoxScanner.Token name) {
+    Variable(Main.LoxScanner.Token name) {
       this.name = name;
     }
 
