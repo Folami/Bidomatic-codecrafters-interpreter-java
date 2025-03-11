@@ -86,7 +86,7 @@ public class Main {
             keywords.put("return", TokenType.RETURN);
         }
 
-        private static class Token {
+        protected static class Token {
             final TokenType type;
             final String lexeme;
             final Object literal;
