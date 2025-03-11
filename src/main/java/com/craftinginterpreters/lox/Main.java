@@ -1,3 +1,5 @@
+package com.craftinginterpreters.lox;
+
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -45,13 +47,15 @@ public class Main {
 
         enum TokenType {
             // Single-character tokens.
-            LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
-            COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
+            LEFT_PAREN, RIGHT_PAREN,
+            LEFT_BRACE, RIGHT_BRACE,
+            DOT, COMMA, SEMICOLON,
+            MINUS, PLUS, SLASH, STAR,
             // One or two character tokens.
             BANG, BANG_EQUAL,
+            LESS, LESS_EQUAL,
             EQUAL, EQUAL_EQUAL,
             GREATER, GREATER_EQUAL,
-            LESS, LESS_EQUAL,
             // Literals.
             IDENTIFIER, STRING, NUMBER,
             // Keywords.
@@ -64,22 +68,22 @@ public class Main {
         private static final Map<String, TokenType> keywords;
         static {
             keywords = new HashMap<>();
+            keywords.put("if", TokenType.IF);
+            keywords.put("or", TokenType.OR);
+            keywords.put("var", TokenType.VAR);
             keywords.put("and", TokenType.AND);
-            keywords.put("class", TokenType.CLASS);
-            keywords.put("else", TokenType.ELSE);
-            keywords.put("false", TokenType.FALSE);
             keywords.put("for", TokenType.FOR);
             keywords.put("fun", TokenType.FUN);
-            keywords.put("if", TokenType.IF);
             keywords.put("nil", TokenType.NIL);
-            keywords.put("or", TokenType.OR);
-            keywords.put("print", TokenType.PRINT);
-            keywords.put("return", TokenType.RETURN);
-            keywords.put("super", TokenType.SUPER);
             keywords.put("this", TokenType.THIS);
             keywords.put("true", TokenType.TRUE);
-            keywords.put("var", TokenType.VAR);
+            keywords.put("else", TokenType.ELSE);
+            keywords.put("print", TokenType.PRINT);
+            keywords.put("super", TokenType.SUPER);
             keywords.put("while", TokenType.WHILE);
+            keywords.put("class", TokenType.CLASS);
+            keywords.put("false", TokenType.FALSE);
+            keywords.put("return", TokenType.RETURN);
         }
 
         private static class Token {
@@ -94,7 +98,6 @@ public class Main {
                 this.literal = literal;
                 this.line = line;
             }
-
             public String toString() {
                 return type + " " + lexeme + " " + literal;
             }
@@ -137,11 +140,8 @@ public class Main {
                 case '/': handleSlash(); break;
                 case ' ':
                 case '\r':
-                case '\t':
-                    break;
-                case '\n':
-                    line++;
-                    break;
+                case '\t': break;
+                case '\n': line++; break;
                 case '"': string(); break;
                 default:
                     if (isDigit(c)) {
