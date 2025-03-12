@@ -133,7 +133,7 @@ class Parser {
     }
 
     private ParseError error(Token token, String message) {
-        Main.LoxScanner.error(token, message);
+        Main.LoxScanner.error(token.line, message);
         return new ParseError();
     }
 
