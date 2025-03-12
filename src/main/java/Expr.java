@@ -176,7 +176,7 @@ abstract class Expr {
         final Token operator;
         final Expr right;
     }
-
+    /* 
     //> expr-variable
     static class Variable extends Expr {
         Variable(Token name) {
@@ -188,6 +188,6 @@ abstract class Expr {
         }
         final Token name;
     }
-
+    */
     abstract <R> R accept(Visitor<R> visitor);
 }
