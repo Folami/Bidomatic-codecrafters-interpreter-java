@@ -23,15 +23,21 @@ public class Main {
             System.err.println("Error reading file: " + e.getMessage());
             System.exit(1);
         }
-        if (fileContents.length() > 0) {
-            LoxScanner scanner = new LoxScanner(fileContents);
-            List<LoxScanner.Token> tokens = scanner.scanTokens();
-            Parser parser = new Parser(tokens);
-            if (LoxScanner.hadError) {
-                System.exit(65);
+        try {
+            switch (command) {
+                case "tokenize":
+                    scanner.scan(fileContents, true);
+                    break;
+                case "parse":
+                    parser.parse(scanner.scan(fileContents, false));
+                    break;
+                default:
+                    System.err.println("Unknown command: " + command);
+                    System.exit(1);
+                    break;
             }
-        } else {
-            System.out.println("EOF  null"); // Placeholder, remove this line when implementing the scanner
+        } catch (Exception e) {
+            System.exit(Integer.parseInt(e.getMessage()));
         }
     }
 
