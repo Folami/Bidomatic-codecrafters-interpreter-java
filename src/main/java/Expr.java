@@ -2,7 +2,7 @@
 // package com.craftinginterpreters.lox;
 
 import java.util.List;
-import Main.LoxScanner.Token;
+// import Main.LoxScanner.Token;
 
 abstract class Expr {
     interface Visitor<R> {
@@ -24,7 +24,7 @@ abstract class Expr {
     
     //> expr-binary
     static class Binary extends Expr {
-        Binary(Expr left, Token operator, Expr right) {
+        Binary(Expr left, Main.LoxScanner.Token operator, Expr right) {
             this.left = left;
             this.operator = operator;
             this.right = right;
