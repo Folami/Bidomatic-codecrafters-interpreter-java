@@ -1,5 +1,3 @@
-// package com.craftinginterpreters.lox;
-
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -7,15 +5,11 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         if (args.length < 2) {
-            System.err.println("Usage: ./your_program.sh tokenize <filename>");
+            System.err.println("Usage: ./your_program.sh <command> <filename>");
             System.exit(1);
         }
         String command = args[0];
         String filename = args[1];
-        if (!command.equals("tokenize")) {
-            System.err.println("Unknown command: " + command);
-            System.exit(1);
-        }
         String fileContents = "";
         try {
             fileContents = Files.readString(Path.of(filename));
@@ -24,26 +18,34 @@ public class Main {
             System.exit(1);
         }
         LoxScanner scanner = new LoxScanner(fileContents);
+        List<LoxScanner.Token> tokens = scanner.scanTokens();
+        if (LoxScanner.hadError) {
+            System.exit(65);
+        }
         try {
             switch (command) {
                 case "tokenize":
-                    scanner.scanTokens();
+                    for (LoxScanner.Token token : tokens) {
+                        System.out.println(token);
+                    }
                     break;
                 case "parse":
-                    Parser parser = new Parser(scanner.scanTokens());
-                    parser.parse();
+                    Parser parser = new Parser(tokens);
+                    Expr expression = parser.parse();
+                    if (expression != null) {
+                        System.out.println(expression);
+                    }
                     break;
                 default:
                     System.err.println("Unknown command: " + command);
                     System.exit(1);
-                    break;
             }
         } catch (Exception e) {
             System.exit(Integer.parseInt(e.getMessage()));
         }
     }
 
-    protected static class LoxScanner {
+    private static class LoxScanner {
         private static String source;
         private static final List<Token> tokens = new ArrayList<>();
         private static int start = 0;
@@ -53,15 +55,13 @@ public class Main {
 
         enum TokenType {
             // Single-character tokens.
-            LEFT_PAREN, RIGHT_PAREN,
-            LEFT_BRACE, RIGHT_BRACE,
-            DOT, COMMA, SEMICOLON,
-            MINUS, PLUS, SLASH, STAR,
+            LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
+            COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
             // One or two character tokens.
             BANG, BANG_EQUAL,
-            LESS, LESS_EQUAL,
             EQUAL, EQUAL_EQUAL,
             GREATER, GREATER_EQUAL,
+            LESS, LESS_EQUAL,
             // Literals.
             IDENTIFIER, STRING, NUMBER,
             // Keywords.
@@ -74,25 +74,25 @@ public class Main {
         private static final Map<String, TokenType> keywords;
         static {
             keywords = new HashMap<>();
-            keywords.put("if", TokenType.IF);
-            keywords.put("or", TokenType.OR);
-            keywords.put("var", TokenType.VAR);
             keywords.put("and", TokenType.AND);
+            keywords.put("class", TokenType.CLASS);
+            keywords.put("else", TokenType.ELSE);
+            keywords.put("false", TokenType.FALSE);
             keywords.put("for", TokenType.FOR);
             keywords.put("fun", TokenType.FUN);
+            keywords.put("if", TokenType.IF);
             keywords.put("nil", TokenType.NIL);
+            keywords.put("or", TokenType.OR);
+            keywords.put("print", TokenType.PRINT);
+            keywords.put("return", TokenType.RETURN);
+            keywords.put("super", TokenType.SUPER);
             keywords.put("this", TokenType.THIS);
             keywords.put("true", TokenType.TRUE);
-            keywords.put("else", TokenType.ELSE);
-            keywords.put("print", TokenType.PRINT);
-            keywords.put("super", TokenType.SUPER);
+            keywords.put("var", TokenType.VAR);
             keywords.put("while", TokenType.WHILE);
-            keywords.put("class", TokenType.CLASS);
-            keywords.put("false", TokenType.FALSE);
-            keywords.put("return", TokenType.RETURN);
         }
 
-        protected static class Token {
+        private static class Token {
             final TokenType type;
             final String lexeme;
             final Object literal;
@@ -104,6 +104,7 @@ public class Main {
                 this.literal = literal;
                 this.line = line;
             }
+
             public String toString() {
                 return type + " " + lexeme + " " + literal;
             }
@@ -146,8 +147,11 @@ public class Main {
                 case '/': handleSlash(); break;
                 case ' ':
                 case '\r':
-                case '\t': break;
-                case '\n': line++; break;
+                case '\t':
+                    break;
+                case '\n':
+                    line++;
+                    break;
                 case '"': string(); break;
                 default:
                     if (isDigit(c)) {
@@ -258,7 +262,7 @@ public class Main {
             return isAlpha(c) || isDigit(c);
         }
 
-        protected static void error(int line, String message) {
+        private static void error(int line, String message) {
             report(line, "", message);
         }
 
