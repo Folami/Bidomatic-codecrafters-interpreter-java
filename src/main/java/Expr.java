@@ -17,7 +17,7 @@ abstract class Expr {
         R visitSuperExpr(Super expr);
         R visitThisExpr(This expr);
         R visitUnaryExpr(Unary expr);
-        R visitVariableExpr(Variable expr);
+        // R visitVariableExpr(Variable expr);
     }
 
     // Nested Expr classes here...
