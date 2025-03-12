@@ -250,7 +250,7 @@ public class Main {
             return isAlpha(c) || isDigit(c);
         }
 
-        private static void error(int line, String message) {
+        protected static void error(int line, String message) {
             report(line, "", message);
         }
 
