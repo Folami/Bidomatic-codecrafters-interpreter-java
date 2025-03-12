@@ -139,7 +139,6 @@ class Parser {
     private ParseError error(Main.LoxScanner.Token token, String message) {
         Main.LoxScanner.error(token.line, message);
         return new ParseError();
-    return new ParseError();
     }
 
     private void synchronize() {
