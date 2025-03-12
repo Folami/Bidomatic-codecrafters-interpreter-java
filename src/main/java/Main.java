@@ -23,11 +23,12 @@ public class Main {
             System.err.println("Error reading file: " + e.getMessage());
             System.exit(1);
         }
+        LoxScanner scanner = new LoxScanner(fileContents);
+        List<LoxScanner.Token> tokens = scanner.scanTokens();
         try {
             switch (command) {
                 case "tokenize":
-                    LoxScanner scanner = new LoxScanner(fileContents);
-                    List<LoxScanner.Token> tokens = scanner.scanTokens();
+                    tokens;
                     break;
                 case "parse":
                     Parser parser = new Parser(tokens);
