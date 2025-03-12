@@ -103,7 +103,7 @@ class AstPrinter implements Expr.Visitor<String> {
       return parenthesize(expr.operator.lexeme,
                           expr.left, expr.right);
     }
-    /* 
+    
     @Override
     public String visitCallExpr(Expr.Call expr) {
       return parenthesize2("call", expr.callee, expr.arguments);
@@ -113,7 +113,7 @@ class AstPrinter implements Expr.Visitor<String> {
     public String visitGetExpr(Expr.Get expr) {
       return parenthesize2(".", expr.object, expr.name.lexeme);
     }
-    */
+    
     @Override
     public String visitGroupingExpr(Expr.Grouping expr) {
       return parenthesize("group", expr.expression);
@@ -129,7 +129,7 @@ class AstPrinter implements Expr.Visitor<String> {
     public String visitLogicalExpr(Expr.Logical expr) {
       return parenthesize(expr.operator.lexeme, expr.left, expr.right);
     }
-    /* 
+    
     @Override
     public String visitSetExpr(Expr.Set expr) {
       return parenthesize2("=",
@@ -140,7 +140,7 @@ class AstPrinter implements Expr.Visitor<String> {
     public String visitSuperExpr(Expr.Super expr) {
       return parenthesize2("super", expr.method);
     }
-    */
+    
     @Override
     public String visitThisExpr(Expr.This expr) {
       return "this";
@@ -167,7 +167,7 @@ class AstPrinter implements Expr.Visitor<String> {
 
       return builder.toString();
     }
-    /* 
+
     private String parenthesize2(String name, Object... parts) {
       StringBuilder builder = new StringBuilder();
 
@@ -194,7 +194,7 @@ class AstPrinter implements Expr.Visitor<String> {
         }
       }
     }
-      */
+
   /* Representing Code printer-main < Representing Code omit
     public static void main(String[] args) {
       Expr expression = new Expr.Binary(
