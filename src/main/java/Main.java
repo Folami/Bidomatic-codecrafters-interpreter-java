@@ -19,29 +19,25 @@ public class Main {
         }
         LoxScanner scanner = new LoxScanner(fileContents);
         List<LoxScanner.Token> tokens = scanner.scanTokens();
+        switch (command) {
+            case "tokenize":
+                for (LoxScanner.Token token : tokens) {
+                    System.out.println(token);
+                }
+                break;
+            case "parse":
+                Parser parser = new Parser(tokens);
+                Expr expression = parser.parse();
+                if (expression != null) {
+                    System.out.println(new AstPrinter().print(expression));
+                }
+                break;
+            default:
+                System.err.println("Unknown command: " + command);
+                System.exit(1);
+        }
         if (LoxScanner.hadError) {
             System.exit(65);
-        }
-        try {
-            switch (command) {
-                case "tokenize":
-                    for (LoxScanner.Token token : tokens) {
-                        System.out.println(token);
-                    }
-                    break;
-                case "parse":
-                    Parser parser = new Parser(tokens);
-                    Expr expression = parser.parse();
-                    if (expression != null) {
-                        System.out.println(expression);
-                    }
-                    break;
-                default:
-                    System.err.println("Unknown command: " + command);
-                    System.exit(1);
-            }
-        } catch (Exception e) {
-            System.exit(Integer.parseInt(e.getMessage()));
         }
     }
 
