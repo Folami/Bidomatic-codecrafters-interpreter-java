@@ -28,7 +28,7 @@ class Parser {
 
     private Expr equality() {
         Expr expr = comparison();
-        while (match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)) {
+        while (match(Main.LoxScanner.TokenType.BANG_EQUAL, Main.LoxScanner.TokenType.EQUAL_EQUAL)) {
             Main.LoxScanner.Token operator = previous();
             Expr right = comparison();
             expr = new Expr.Binary(expr, operator, right);
@@ -39,10 +39,10 @@ class Parser {
     private Expr comparison() {
         Expr expr = term();
         while (match(
-                TokenType.GREATER, TokenType.GREATER_EQUAL, 
-                TokenType.LESS, TokenType.LESS_EQUAL
+                Main.LoxScanner.TokenType.GREATER, Main.LoxScanner.TokenType.GREATER_EQUAL,
+                Main.LoxScanner.TokenType.LESS, Main.LoxScanner.TokenType.LESS_EQUAL
             )) {
-            Token operator = previous();
+            Main.LoxScanner.Token operator = previous();
             Expr right = term();
             expr = new Expr.Binary(expr, operator, right);
         }
