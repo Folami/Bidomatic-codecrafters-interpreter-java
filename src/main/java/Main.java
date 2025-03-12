@@ -45,7 +45,7 @@ public class Main {
         }
     }
 
-    private static class LoxScanner {
+    protected static class LoxScanner {
         private static String source;
         private static final List<Token> tokens = new ArrayList<>();
         private static int start = 0;
