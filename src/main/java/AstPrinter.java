@@ -8,7 +8,7 @@ class AstPrinter implements Expr.Visitor<String> {
     String print(Expr expr) {
       return expr.accept(this);
     }
-
+    /* 
     String print(Stmt stmt) {
       return stmt.accept(this);
     }
@@ -92,7 +92,7 @@ class AstPrinter implements Expr.Visitor<String> {
     public String visitWhileStmt(Stmt.While stmt) {
       return parenthesize2("while", stmt.condition, stmt.body);
     }
-
+    */
     @Override
     public String visitAssignExpr(Expr.Assign expr) {
       return parenthesize2("=", expr.name.lexeme, expr.value);
@@ -167,7 +167,7 @@ class AstPrinter implements Expr.Visitor<String> {
 
       return builder.toString();
     }
-
+    /* 
     private String parenthesize2(String name, Object... parts) {
       StringBuilder builder = new StringBuilder();
 
@@ -194,6 +194,7 @@ class AstPrinter implements Expr.Visitor<String> {
         }
       }
     }
+      */
   /* Representing Code printer-main < Representing Code omit
     public static void main(String[] args) {
       Expr expression = new Expr.Binary(
