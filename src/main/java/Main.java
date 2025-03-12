@@ -92,7 +92,7 @@ public class Main {
             keywords.put("while", TokenType.WHILE);
         }
 
-        private static class Token {
+        protected static class Token {
             final TokenType type;
             final String lexeme;
             final Object literal;
