@@ -1,4 +1,4 @@
-package com.craftinginterpreters.lox;
+// package com.craftinginterpreters.lox;
 
 import java.util.*;
 import com.craftinginterpreters.lox.Main.*;
@@ -6,11 +6,11 @@ import com.craftinginterpreters.lox.Main.LoxScanner.*;
 import com.craftinginterpreters.lox.Main.LoxScanner.TokenType.*;
 
 class Parser {
-    private final List<Token> tokens;
+    private final List<Main.LoxScanner.Token> tokens;
     private int current = 0;
     private static class ParseError extends RuntimeException {}
     
-    Parser(List<Token> tokens) {
+    Parser(List<Main.LoxScanner.Token> tokens) {
         this.tokens = tokens;
     }
 
@@ -29,7 +29,7 @@ class Parser {
     private Expr equality() {
         Expr expr = comparison();
         while (match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)) {
-            Token operator = previous();
+            Main.LoxScanner.Token operator = previous();
             Expr right = comparison();
             expr = new Expr.Binary(expr, operator, right);
         }

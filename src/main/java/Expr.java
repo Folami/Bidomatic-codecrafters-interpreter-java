@@ -34,7 +34,7 @@ abstract class Expr {
             return visitor.visitBinaryExpr(this);
         }
         final Expr left;
-        final Token operator;
+        final Main.LoxScanner.Token operator;
         final Expr right;
     }
 
@@ -63,7 +63,7 @@ abstract class Expr {
     }
 
     static class Unary extends Expr {
-        Unary(Token operator, Expr right) {
+        Unary(Main.LoxScanner.Token operator, Expr right) {
             this.operator = operator;
             this.right = right;
         }
@@ -71,7 +71,7 @@ abstract class Expr {
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitUnaryExpr(this);
         }
-        final Token operator;
+        final Main.LoxScanner.Token operator;
         final Expr right;
     }
 
