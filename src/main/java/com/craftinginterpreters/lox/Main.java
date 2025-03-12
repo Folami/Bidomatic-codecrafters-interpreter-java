@@ -26,9 +26,7 @@ public class Main {
         if (fileContents.length() > 0) {
             LoxScanner scanner = new LoxScanner(fileContents);
             List<LoxScanner.Token> tokens = scanner.scanTokens();
-            for (LoxScanner.Token token : tokens) {
-                System.out.println(token);
-            }
+            Parser parser = new Parser(tokens)
             if (LoxScanner.hadError) {
                 System.exit(65);
             }
