@@ -2,7 +2,7 @@
 package com.craftinginterpreters.lox;
 
 import java.util.List;
-import com.craftinginterpreters.lox.Main.LoxScanner.Token;
+// import com.craftinginterpreters.lox.Main.LoxScanner.Token;
 
 abstract class Expr {
     interface Visitor<R> {
