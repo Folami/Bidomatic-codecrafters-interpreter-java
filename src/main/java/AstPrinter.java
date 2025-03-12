@@ -1,10 +1,9 @@
 package com.craftinginterpreters.lox;
 
 import java.util.List;
-import com.craftinginterpreters.lox.Expr;
 
 
-class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
+class AstPrinter implements Expr.Visitor<String> {
 
     String print(Expr expr) {
       return expr.accept(this);
