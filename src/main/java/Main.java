@@ -24,14 +24,13 @@ public class Main {
             System.exit(1);
         }
         LoxScanner scanner = new LoxScanner(fileContents);
-        List<LoxScanner.Token> tokens = scanner.scanTokens();
         try {
             switch (command) {
                 case "tokenize":
-                    tokens;
+                    scanner.scanTokens();
                     break;
                 case "parse":
-                    Parser parser = new Parser(tokens);
+                    Parser parser = new Parser(scanner.scanTokens());
                     parser.parse();
                     break;
                 default:
