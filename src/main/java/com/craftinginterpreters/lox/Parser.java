@@ -1,9 +1,9 @@
 package com.craftinginterpreters.lox;
 
 import java.util.*;
-import com.craftinginterpreters.lox.Main.*;  
-import com.craftinginterpreters.lox.Main.LoxScanner.*;  
-import com.craftinginterpreters.lox.Main.LoxScanner.TokenType;
+import com.craftinginterpreters.lox.Main.*;
+import com.craftinginterpreters.lox.Main.LoxScanner.*;
+import com.craftinginterpreters.lox.Main.LoxScanner.TokenType.*;
 
 class Parser {
     private final List<Token> tokens;
