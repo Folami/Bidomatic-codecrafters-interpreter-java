@@ -52,14 +52,21 @@ abstract class Expr {
 
     //> expr-literal
     static class Literal extends Expr {
+        final Object value;
+
         Literal(Object value) {
             this.value = value;
         }
+
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitLiteralExpr(this);
         }
-        final Object value;
+
+        @Override
+        public String toString() {
+            return value.toString();
+        }
     }
 
     static class Unary extends Expr {
