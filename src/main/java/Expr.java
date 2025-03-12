@@ -1,5 +1,5 @@
 //> Appendix II expr
-package com.craftinginterpreters.lox;
+// package com.craftinginterpreters.lox;
 
 import java.util.List;
 // import com.craftinginterpreters.lox.Main.LoxScanner.Token;
