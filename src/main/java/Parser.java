@@ -49,8 +49,8 @@ class Parser {
         return expr;
     }
 
-    private boolean match(TokenType... types) {
-        for (TokenType type : types) {
+    private boolean match(Main.LoxScanner.TokenType... types) {
+        for (Main.LoxScanner.TokenType type : types) {
             if (check(type)) {
                 advance();
                 return true;
@@ -59,34 +59,34 @@ class Parser {
         return false;
     }
 
-    private boolean check(TokenType type) {
+    private boolean check(Main.LoxScanner.TokenType type) {
         if (isAtEnd()) return false;
         return peek().type == type;
     }
 
-    private Token advance() {
+    private Main.LoxScanner.Token advance() {
         if (!isAtEnd()) current++;
         return previous();
     }
 
     //> utils
     private boolean isAtEnd() {
-        return peek().type == TokenType.EOF;
+        return peek().type == Main.LoxScanner.TokenType.EOF;
     }
 
-    private Token peek() {
+    private Main.LoxScanner.Token peek() {
         return tokens.get(current);
     }
 
-    private Token previous() {
+    private Main.LoxScanner.Token previous() {
         return tokens.get(current - 1);
     }
     //< utils
 
     private Expr term() {
         Expr expr = factor();
-        while (match(TokenType.MINUS, TokenType.PLUS)) {
-            Token operator = previous();
+        while (match(Main.LoxScanner.TokenType.MINUS, Main.LoxScanner.TokenType.PLUS)) {
+            Main.LoxScanner.Token operator = previous();
             Expr right = factor();
             expr = new Expr.Binary(expr, operator, right);
         }
@@ -95,8 +95,8 @@ class Parser {
 
     private Expr factor() {
         Expr expr = unary();
-        while (match(TokenType.SLASH, TokenType.STAR)) {
-            Token operator = previous();
+        while (match(Main.LoxScanner.TokenType.SLASH, Main.LoxScanner.TokenType.STAR)) {
+            Main.LoxScanner.Token operator = previous();
             Expr right = unary();
             expr = new Expr.Binary(expr, operator, right);
         }
@@ -104,8 +104,8 @@ class Parser {
     }
 
     private Expr unary() {
-        if (match(TokenType.BANG, TokenType.MINUS)) {
-            Token operator = previous();
+        if (match(Main.LoxScanner.TokenType.BANG, Main.LoxScanner.TokenType.MINUS)) {
+            Main.LoxScanner.Token operator = previous();
             Expr right = unary();
             return new Expr.Unary(operator, right);
         }
@@ -113,26 +113,26 @@ class Parser {
     }
 
     private Expr primary() {
-        if (match(TokenType.FALSE)) return new Expr.Literal(false);
-        if (match(TokenType.TRUE)) return new Expr.Literal(true);
-        if (match(TokenType.NIL)) return new Expr.Literal(null);
-        if (match(TokenType.NUMBER, TokenType.STRING)) {
+        if (match(Main.LoxScanner.TokenType.FALSE)) return new Expr.Literal(false);
+        if (match(Main.LoxScanner.TokenType.TRUE)) return new Expr.Literal(true);
+        if (match(Main.LoxScanner.TokenType.NIL)) return new Expr.Literal(null);
+        if (match(Main.LoxScanner.TokenType.NUMBER, TokenType.STRING)) {
             return new Expr.Literal(previous().literal);
         }
-        if (match(TokenType.LEFT_PAREN)) {
+        if (match(Main.LoxScanner.TokenType.LEFT_PAREN)) {
             Expr expr = expression();
-            consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
+            consume(Main.LoxScanner.TokenType.RIGHT_PAREN, "Expect ')' after expression.");
             return new Expr.Grouping(expr);
         }
         throw error(peek(), "Expect expression.");
     }
 
-    private Token consume(TokenType type, String message) {
+    private Main.LoxScanner.Token consume(Main.LoxScanner.TokenType type, String message) {
         if (check(type)) return advance();
         throw error(peek(), message);
     }
 
-    private ParseError error(Token token, String message) {
+    private ParseError error(Main.LoxScanner.Token token, String message) {
         Main.LoxScanner.error(token.line, message);
         return new ParseError();
     }
@@ -140,18 +140,18 @@ class Parser {
     private void synchronize() {
         advance();
         while (!isAtEnd()) {
-            if (previous().type == TokenType.SEMICOLON) 
+            if (previous().type == Main.LoxScanner.TokenType.SEMICOLON) 
                 return;
 
             switch (peek().type) {
-                case TokenType.CLASS:
-                case TokenType.FUN:
-                case TokenType.VAR:
-                case TokenType.FOR:
-                case TokenType.IF:
-                case TokenType.WHILE:
-                case TokenType.PRINT:
-                case TokenType.RETURN:
+                case Main.LoxScanner.TokenType.CLASS:
+                case Main.LoxScanner.TokenType.FUN:
+                case Main.LoxScanner.TokenType.VAR:
+                case Main.LoxScanner.TokenType.FOR:
+                case Main.LoxScanner.TokenType.IF:
+                case Main.LoxScanner.TokenType.WHILE:
+                case Main.LoxScanner.Token.PRINT:
+                case Main.LoxScanner.Token.RETURN:
                 return;
             }
             advance();
