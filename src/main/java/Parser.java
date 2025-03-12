@@ -1,9 +1,6 @@
 // package com.craftinginterpreters.lox;
 
 import java.util.*;
-import com.craftinginterpreters.lox.Main.*;
-import com.craftinginterpreters.lox.Main.LoxScanner.*;
-import com.craftinginterpreters.lox.Main.LoxScanner.TokenType.*;
 
 class Parser {
     private final List<Main.LoxScanner.Token> tokens;
@@ -116,7 +113,7 @@ class Parser {
         if (match(Main.LoxScanner.TokenType.FALSE)) return new Expr.Literal(false);
         if (match(Main.LoxScanner.TokenType.TRUE)) return new Expr.Literal(true);
         if (match(Main.LoxScanner.TokenType.NIL)) return new Expr.Literal(null);
-        if (match(Main.LoxScanner.TokenType.NUMBER, TokenType.STRING)) {
+        if (match(Main.LoxScanner.TokenType.NUMBER, Main.LoxScanner.TokenType.STRING)) {
             return new Expr.Literal(previous().literal);
         }
         if (match(Main.LoxScanner.TokenType.LEFT_PAREN)) {
@@ -150,8 +147,8 @@ class Parser {
                 case Main.LoxScanner.TokenType.FOR:
                 case Main.LoxScanner.TokenType.IF:
                 case Main.LoxScanner.TokenType.WHILE:
-                case Main.LoxScanner.Token.PRINT:
-                case Main.LoxScanner.Token.RETURN:
+                case Main.LoxScanner.TokenType.PRINT:
+                case Main.LoxScanner.TokenType.RETURN:
                 return;
             }
             advance();
