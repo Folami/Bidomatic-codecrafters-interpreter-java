@@ -48,7 +48,7 @@ class Interpreter implements Expr.Visitor<Object> {
                 checkNumberOperand(expr.operator, right);
                 return -(double)right;
         }
-        // Unreachable.
+        // Unreachable
         return null;
     }
 
