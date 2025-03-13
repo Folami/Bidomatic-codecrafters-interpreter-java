@@ -34,8 +34,7 @@ public class Main {
                 break;
             case "evaluate":
                 Interpreter interpreter = new Interpreter();
-                Object result = interpreter.interpret(tokens);
-                System.out.println(result);
+                interpreter.interpret(tokens);
                 break;
             default:
                 System.err.println("Unknown command: " + command);
