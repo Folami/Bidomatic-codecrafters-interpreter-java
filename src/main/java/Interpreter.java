@@ -1,6 +1,5 @@
 // package com.craftinginterpreters.lox;
 
-import Main.LoxScanner;
 
 class Interpreter implements Expr.Visitor<Object> {
 
@@ -9,7 +8,7 @@ class Interpreter implements Expr.Visitor<Object> {
             Object value = evaluate(expression);
             System.out.println(stringify(value));
         } catch (RuntimeError error) {
-            LoxScanner.runtimeError(error);
+            Main.LoxScanner.runtimeError(error);
         }
     }
 
