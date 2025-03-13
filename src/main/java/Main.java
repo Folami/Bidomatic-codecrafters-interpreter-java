@@ -32,13 +32,17 @@ public class Main {
                     System.out.println(new AstPrinter().print(expression));
                 }
                 break;
+            case "evaluate":
+                Interpreter interpreter = new Interpreter();
+                Object result = interpreter.interpret(tokens);
+                System.out.println(result);
+                break;
             default:
                 System.err.println("Unknown command: " + command);
                 System.exit(1);
         }
-        if (LoxScanner.hadError) {
-            System.exit(65);
-        }
+        if (LoxScanner.hadError) System.exit(65);
+        if (LoxScanner.hadRuntimeError) System.exit(70);
     }
 
     protected static class LoxScanner {
@@ -48,6 +52,7 @@ public class Main {
         private static int current = 0;
         private static int line = 1;
         private static boolean hadError = false;
+        static boolean hadRuntimeError = false;
 
         enum TokenType {
             // Single-character tokens.
@@ -126,21 +131,36 @@ public class Main {
         private static void scanToken() {
             char c = advance();
             switch (c) {
-                case '(': addToken(TokenType.LEFT_PAREN); break;
-                case ')': addToken(TokenType.RIGHT_PAREN); break;
-                case '{': addToken(TokenType.LEFT_BRACE); break;
-                case '}': addToken(TokenType.RIGHT_BRACE); break;
-                case ',': addToken(TokenType.COMMA); break;
-                case '.': addToken(TokenType.DOT); break;
-                case '-': addToken(TokenType.MINUS); break;
-                case '+': addToken(TokenType.PLUS); break;
-                case ';': addToken(TokenType.SEMICOLON); break;
-                case '*': addToken(TokenType.STAR); break;
-                case '!': handleBang(); break;
-                case '=': handleEqual(); break;
-                case '<': handleLess(); break;
-                case '>': handleGreater(); break;
-                case '/': handleSlash(); break;
+                case '(': 
+                    addToken(TokenType.LEFT_PAREN); break;
+                case ')': 
+                    addToken(TokenType.RIGHT_PAREN); break;
+                case '{': 
+                    addToken(TokenType.LEFT_BRACE); break;
+                case '}': 
+                    addToken(TokenType.RIGHT_BRACE); break;
+                case ',': 
+                    addToken(TokenType.COMMA); break;
+                case '.': 
+                    addToken(TokenType.DOT); break;
+                case '-': 
+                    addToken(TokenType.MINUS); break;
+                case '+': 
+                    addToken(TokenType.PLUS); break;
+                case ';': 
+                    addToken(TokenType.SEMICOLON); break;
+                case '*': 
+                    addToken(TokenType.STAR); break;
+                case '!': 
+                    handleBang(); break;
+                case '=': 
+                    handleEqual(); break;
+                case '<': 
+                    handleLess(); break;
+                case '>': 
+                    handleGreater(); break;
+                case '/': 
+                    handleSlash(); break;
                 case ' ':
                 case '\r':
                 case '\t':
@@ -148,7 +168,9 @@ public class Main {
                 case '\n':
                     line++;
                     break;
-                case '"': string(); break;
+                case '"': 
+                    string(); 
+                    break;
                 default:
                     if (isDigit(c)) {
                         number();
@@ -265,6 +287,12 @@ public class Main {
         private static void report(int line, String where, String message) {
             System.err.println("[line " + line + "] Error" + where + ": " + message);
             hadError = true;
+        }
+
+        static void runtimeError(RuntimeError error) {
+            System.err.println(error.getMessage() +
+                "\n[line " + error.token.line + "]");
+            hadRuntimeError = true;
         }
     }
 }
