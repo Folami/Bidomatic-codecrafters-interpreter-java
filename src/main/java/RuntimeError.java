@@ -1,9 +1,10 @@
 // package com.craftinginterpreters.lox;
 
 public class RuntimeError extends RuntimeException {
-    final Token token;
+    //
+    final Main.LoxScanner.Token token;
 
-    RuntimeError(Token token, String message) {
+    public RuntimeError(Main.LoxScanner.Token token, String message) {
         super(message);
         this.token = token;
     }
