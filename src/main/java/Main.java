@@ -31,7 +31,9 @@ public class Main {
                 Parser parser = new Parser(tokens);
                 List<Stmt> statements = parser.parse();
                 if (statements != null) {
-                    System.out.println(new AstPrinter().print(statements));
+                    for (Stmt statement : statements) {
+                        System.out.println(statement);
+                    };
                 }
                 break;
             case "evaluate":
