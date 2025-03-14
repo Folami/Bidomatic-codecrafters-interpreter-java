@@ -6,18 +6,18 @@ import java.util.List;
 
 abstract class Expr {
     interface Visitor<R> {
-        // R visitAssignExpr(Assign expr);
+        R visitAssignExpr(Assign expr);
         R visitBinaryExpr(Binary expr);
-        // R visitCallExpr(Call expr);
-        // R visitGetExpr(Get expr);
+        R visitCallExpr(Call expr);
+        R visitGetExpr(Get expr);
         R visitGroupingExpr(Grouping expr);
         R visitLiteralExpr(Literal expr);
-        // R visitLogicalExpr(Logical expr);
-        // R visitSetExpr(Set expr);
-        // R visitSuperExpr(Super expr);
-        // R visitThisExpr(This expr);
+        R visitLogicalExpr(Logical expr);
+        R visitSetExpr(Set expr);
+        R visitSuperExpr(Super expr);
+        R visitThisExpr(This expr);
         R visitUnaryExpr(Unary expr);
-        // R visitVariableExpr(Variable expr);
+        R visitVariableExpr(Variable expr);
     }
 
     // Nested Expr classes here...
@@ -29,10 +29,12 @@ abstract class Expr {
             this.operator = operator;
             this.right = right;
         }
+
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitBinaryExpr(this);
         }
+
         final Expr left;
         final Main.LoxScanner.Token operator;
         final Expr right;
@@ -43,10 +45,12 @@ abstract class Expr {
         Grouping(Expr expression) {
             this.expression = expression;
         }
+
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitGroupingExpr(this);
         }
+
         final Expr expression;
     }
 
@@ -74,29 +78,48 @@ abstract class Expr {
             this.operator = operator;
             this.right = right;
         }
+
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitUnaryExpr(this);
         }
+
         final Main.LoxScanner.Token operator;
         final Expr right;
     }
 
-    /* 
+    //> expr-variable
+    static class Variable extends Expr {
+        Variable(Main.LoxScanner.Token name) {
+            this.name = name;
+        }
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitVariableExpr(this);
+        }
+
+        final Main.LoxScanner.Token name;
+    }
+
+     
     //> expr-assign
     static class Assign extends Expr {
         Assign(Token name, Expr value) {
             this.name = name;
             this.value = value;
         }
+
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitAssignExpr(this);
         }
+
         final Token name;
         final Expr value;
     }
 
+    
     //> expr-call
     static class Call extends Expr {
         Call(Expr callee, Token paren, List<Expr> arguments) {
@@ -104,10 +127,12 @@ abstract class Expr {
             this.paren = paren;
             this.arguments = arguments;
         }
+
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitCallExpr(this);
         }
+
         final Expr callee;
         final Token paren;
         final List<Expr> arguments;
@@ -119,10 +144,12 @@ abstract class Expr {
             this.object = object;
             this.name = name;
         }
+
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitGetExpr(this);
         }
+
         final Expr object;
         final Token name;
     }
@@ -134,10 +161,12 @@ abstract class Expr {
             this.operator = operator;
             this.right = right;
         }
+
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitLogicalExpr(this);
         }
+
         final Expr left;
         final Token operator;
         final Expr right;
@@ -150,10 +179,12 @@ abstract class Expr {
             this.name = name;
             this.value = value;
         }
+
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitSetExpr(this);
         }
+
         final Expr object;
         final Token name;
         final Expr value;
@@ -165,10 +196,12 @@ abstract class Expr {
             this.keyword = keyword;
             this.method = method;
         }
+
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitSuperExpr(this);
         }
+
         final Token keyword;
         final Token method;
     }
@@ -178,25 +211,14 @@ abstract class Expr {
         This(Token keyword) {
             this.keyword = keyword;
         }
+
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitThisExpr(this);
         }
+
         final Token keyword;
     }
-    //> expr-unary
-    
-    //> expr-variable
-    static class Variable extends Expr {
-        Variable(Token name) {
-            this.name = name;
-        }
-        @Override
-        <R> R accept(Visitor<R> visitor) {
-            return visitor.visitVariableExpr(this);
-        }
-        final Token name;
-    }
-    */
+
     abstract <R> R accept(Visitor<R> visitor);
 }
