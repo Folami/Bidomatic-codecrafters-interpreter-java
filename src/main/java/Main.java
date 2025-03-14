@@ -35,9 +35,9 @@ public class Main {
                 }
                 break;
             case "evaluate":
-                LoxScanner scanner = new LoxScanner(fileContents);
-                List<LoxScanner.Token> tokens = scanner.scanTokens();
-                Parser parser = new Parser(tokens);
+                // LoxScanner scanner = new LoxScanner(fileContents);
+                // List<LoxScanner.Token> tokens = scanner.scanTokens();
+                // Parser parser = new Parser(tokens);
                 List<Stmt> statements = parser.parse();
                 Interpreter interpreter = new Interpreter();
                 interpreter.interpret(new Parser(tokens).parse());
