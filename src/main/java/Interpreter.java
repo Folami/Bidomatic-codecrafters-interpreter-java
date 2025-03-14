@@ -51,6 +51,17 @@ class Interpreter implements Expr.Visitor<Object>,
         return environment.get(expr.name);
     }
 
+    @Override
+    public Object visitThisExpr(Expr.This expr) {
+        return lookupVariable(expr.keyword, expr);
+    }
+
+    private Object lookupVariable(Main.LoxScanner.Token name, Expr expr) {
+        Object value = environment.get(name);
+        if (value != null) return value;
+        throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
+    }
+
     private Object evaluate(Expr expr) {
         return expr.accept(this);
     }
