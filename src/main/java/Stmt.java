@@ -32,7 +32,7 @@ abstract class Stmt {
 
     //> stmt-class
     static class Class extends Stmt {
-        Class(Token name, Expr.Variable superclass, List<Stmt.Function> methods) {
+        Class(Main.LoxScanner.Token name, Expr.Variable superclass, List<Stmt.Function> methods) {
             this.name = name;
             this.superclass = superclass;
             this.methods = methods;
@@ -43,7 +43,7 @@ abstract class Stmt {
             return visitor.visitClassStmt(this);
         }
 
-        final Token name;
+        final Main.LoxScanner.Token name;
         final Expr.Variable superclass;
         final List<Stmt.Function> methods;
     }
@@ -64,7 +64,7 @@ abstract class Stmt {
 
     //> stmt-function
     static class Function extends Stmt {
-        Function(Token name, List<Token> params, List<Stmt> body) {
+        Function(Main.LoxScanner.Token name, List<Main.LoxScanner.Token> params, List<Stmt> body) {
             this.name = name;
             this.params = params;
             this.body = body;
@@ -75,8 +75,8 @@ abstract class Stmt {
             return visitor.visitFunctionStmt(this);
         }
 
-        final Token name;
-        final List<Token> params;
+        final Main.LoxScanner.Token name;
+        final List<Main.LoxScanner.Token> params;
         final List<Stmt> body;
     }
 
@@ -114,7 +114,7 @@ abstract class Stmt {
 
     //> stmt-return
     static class Return extends Stmt {
-        Return(Token keyword, Expr value) {
+        Return(Main.LoxScanner.Token keyword, Expr value) {
             this.keyword = keyword;
             this.value = value;
         }
@@ -124,13 +124,13 @@ abstract class Stmt {
             return visitor.visitReturnStmt(this);
         }
 
-        final Token keyword;
+        final Main.LoxScanner.Token keyword;
         final Expr value;
     }
 
     //> stmt-var
     static class Var extends Stmt {
-        Var(Token name, Expr initializer) {
+        Var(Main.LoxScanner.Token name, Expr initializer) {
             this.name = name;
             this.initializer = initializer;
         }
@@ -140,7 +140,7 @@ abstract class Stmt {
             return visitor.visitVarStmt(this);
         }
 
-        final Token name;
+        final Main.LoxScanner.Token name;
         final Expr initializer;
     }
 

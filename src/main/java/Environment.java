@@ -18,7 +18,7 @@ class Environment {
         values.put(name, value);
     }
 
-    Object get(Token name) {
+    Object get(Main.LoxScanner.Token name) {
         if (values.containsKey(name.lexeme))
             return values.get(name.lexeme);
 
@@ -28,7 +28,7 @@ class Environment {
         throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
     }
 
-    void assign(Token name, Object value) {
+    void assign(Main.LoxScanner.Token name, Object value) {
         if (values.containsKey(name.lexeme)) {
             values.put(name.lexeme, value);
             return;
