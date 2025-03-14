@@ -1,5 +1,4 @@
-public //> Appendix II stmt
-package com.craftinginterpreters.lox;
+// package com.craftinginterpreters.lox;
 
 import java.util.List;
 
