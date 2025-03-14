@@ -2,7 +2,7 @@
 
 import java.util.List;
 
-class AstPrinter implements Expr.Visitor<String> {
+class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
     String print(Expr expr) {
         return expr.accept(this);
     }
