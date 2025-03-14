@@ -2,7 +2,8 @@
 
 import java.util.List;
 
-class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
+class Interpreter implements Expr.Visitor<Object>,
+                             Stmt.Visitor<Void> {
     /*
     void interpret(Expr expression) { 
         try {
@@ -19,7 +20,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
                 execute(statement);
             }
         } catch (RuntimeError error) {
-            Lox.runtimeError(error);
+            Main.LoxScanner.runtimeError(error);
         }
     }
 
