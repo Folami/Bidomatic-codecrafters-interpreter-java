@@ -56,6 +56,31 @@ class Interpreter implements Expr.Visitor<Object>,
         return lookupVariable(expr.keyword, expr);
     }
 
+    @Override
+    public Object visitSuperExpr(Expr.Super expr) {
+        int distance = locals.get(expr);
+        LoxClass superclass = (LoxClass)environment.getAt(
+            distance, "super");
+    //> super-find-this
+
+        LoxInstance object = (LoxInstance)environment.getAt(
+            distance - 1, "this");
+    //< super-find-this
+    //> super-find-method
+
+        LoxFunction method = superclass.findMethod(expr.method.lexeme);
+    //> super-no-method
+
+        if (method == null) {
+        throw new RuntimeError(expr.method,
+            "Undefined property '" + expr.method.lexeme + "'.");
+        }
+
+    //< super-no-method
+        return method.bind(object);
+    //< super-find-method
+    }
+
     private Object lookupVariable(Main.LoxScanner.Token name, Expr expr) {
         Object value = environment.get(name);
         if (value != null) return value;
