@@ -31,16 +31,16 @@ public class Main {
                 Parser parser = new Parser(tokens);
                 List<Stmt> statements = parser.parse();
                 if (statements != null) {
-                    System.out.println(new AstPrinter().print(expression));
+                    System.out.println(new AstPrinter().print(statements));
                 }
                 break;
             case "evaluate":
                 // LoxScanner scanner = new LoxScanner(fileContents);
                 // List<LoxScanner.Token> tokens = scanner.scanTokens();
                 // Parser parser = new Parser(tokens);
-                List<Stmt> statements = parser.parse();
+                // List<Stmt> statements = parser.parse();
                 Interpreter interpreter = new Interpreter();
-                interpreter.interpret(new Parser(tokens).parse());
+                interpreter.interpret(statements);
                 break;
             default:
                 System.err.println("Unknown command: " + command);
