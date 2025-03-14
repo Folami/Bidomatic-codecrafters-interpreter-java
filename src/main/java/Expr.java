@@ -105,7 +105,7 @@ abstract class Expr {
      
     //> expr-assign
     static class Assign extends Expr {
-        Assign(Token name, Expr value) {
+        Assign(Main.LoxScanner.Token name, Expr value) {
             this.name = name;
             this.value = value;
         }
@@ -115,14 +115,14 @@ abstract class Expr {
             return visitor.visitAssignExpr(this);
         }
 
-        final Token name;
+        final Main.LoxScanner.Token name;
         final Expr value;
     }
 
     
     //> expr-call
     static class Call extends Expr {
-        Call(Expr callee, Token paren, List<Expr> arguments) {
+        Call(Expr callee, Main.LoxScanner.Token paren, List<Expr> arguments) {
             this.callee = callee;
             this.paren = paren;
             this.arguments = arguments;
@@ -134,13 +134,13 @@ abstract class Expr {
         }
 
         final Expr callee;
-        final Token paren;
+        final Main.LoxScanner.Token paren;
         final List<Expr> arguments;
     }
 
     //> expr-get
     static class Get extends Expr {
-        Get(Expr object, Token name) {
+        Get(Expr object, Main.LoxScanner.Token name) {
             this.object = object;
             this.name = name;
         }
@@ -151,12 +151,12 @@ abstract class Expr {
         }
 
         final Expr object;
-        final Token name;
+        final Main.LoxScanner.Token name;
     }
 
     //> expr-logical
     static class Logical extends Expr {
-        Logical(Expr left, Token operator, Expr right) {
+        Logical(Expr left, Main.LoxScanner.Token operator, Expr right) {
             this.left = left;
             this.operator = operator;
             this.right = right;
@@ -168,13 +168,13 @@ abstract class Expr {
         }
 
         final Expr left;
-        final Token operator;
+        final Main.LoxScanner.Token operator;
         final Expr right;
     }
 
     //> expr-set
     static class Set extends Expr {
-        Set(Expr object, Token name, Expr value) {
+        Set(Expr object, Main.LoxScanner.Token name, Expr value) {
             this.object = object;
             this.name = name;
             this.value = value;
@@ -186,13 +186,13 @@ abstract class Expr {
         }
 
         final Expr object;
-        final Token name;
+        final Main.LoxScanner.Token name;
         final Expr value;
     }
 
     //> expr-super
     static class Super extends Expr {
-        Super(Token keyword, Token method) {
+        Super(Main.LoxScanner.Token keyword, Main.LoxScanner.Token method) {
             this.keyword = keyword;
             this.method = method;
         }
@@ -202,13 +202,13 @@ abstract class Expr {
             return visitor.visitSuperExpr(this);
         }
 
-        final Token keyword;
-        final Token method;
+        final Main.LoxScanner.Token keyword;
+        final Main.LoxScanner.Token method;
     }
     
     //> expr-this
     static class This extends Expr {
-        This(Token keyword) {
+        This(Main.LoxScanner.Token keyword) {
             this.keyword = keyword;
         }
 
@@ -217,7 +217,7 @@ abstract class Expr {
             return visitor.visitThisExpr(this);
         }
 
-        final Token keyword;
+        final Main.LoxScanner.Token keyword;
     }
 
     abstract <R> R accept(Visitor<R> visitor);
