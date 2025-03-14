@@ -9,6 +9,7 @@ class Parser {
         this.tokens = tokens;
     }
 
+    /*
     Expr parse() {
         try {
             return expression();
@@ -16,20 +17,68 @@ class Parser {
             return null;
         }
     }
+    */
+
+    List<Stmt> parse() {
+        List<Stmt> statements = new ArrayList<>();
+            while (!isAtEnd()) {
+                statements.add(declaration());
+            }
+        return statements; 
+    }
 
     private Expr expression() {
         return equality();
     }
 
+    private Stmt declaration() {
+        try {
+            if (match(VAR)) 
+                return varDeclaration();
+
+            return statement();
+        } catch (ParseError error) {
+            synchronize();
+            return null;
+        }
+    }
+
+    private Stmt statement() {
+        if (match(Main.LoxScanner.TokenType.PRINT)) 
+            return printStatement();
+
+        return expressionStatement();
+    }
+
+    private Stmt printStatement() {
+        Expr value = expression();
+        consume(Main.LoxScanner.TokenType.SEMICOLON, "Expect ';' after value.");
+        return new Stmt.Print(value);
+    }
+
+    private Stmt varDeclaration() {
+        Token name = consume(IDENTIFIER, "Expect variable name.");
+        Expr initializer = null;
+            if (match(Main.LoxScanner.TokenType.EQUAL)) {
+            initializer = expression();
+        }
+        consume(Main.LoxScanner.TokenType.SEMICOLON, "Expect ';' after variable declaration.");
+        return new Stmt.Var(name, initializer);
+    }
+
+    private Stmt expressionStatement() {
+        Expr expr = expression();
+        consume(Main.LoxScanner.TokenType.SEMICOLON, "Expect ';' after expression.");
+        return new Stmt.Expression(expr);
+    }
+
     private Expr equality() {
         Expr expr = comparison();
-
         while (match(Main.LoxScanner.TokenType.BANG_EQUAL, Main.LoxScanner.TokenType.EQUAL_EQUAL)) {
             Main.LoxScanner.Token operator = previous();
             Expr right = comparison();
             expr = new Expr.Binary(expr, operator, right);
         }
-
         return expr;
     }
 
@@ -87,6 +136,10 @@ class Parser {
 
         if (match(Main.LoxScanner.TokenType.NUMBER, Main.LoxScanner.TokenType.STRING)) {
             return new Expr.Literal(previous().literal);
+        }
+
+        if (match(IDENTIFIER)) {
+            return new Expr.Variable(previous());
         }
 
         if (match(Main.LoxScanner.TokenType.LEFT_PAREN)) {

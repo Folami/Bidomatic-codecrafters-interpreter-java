@@ -17,22 +17,28 @@ public class Main {
             System.err.println("Error reading file: " + e.getMessage());
             System.exit(1);
         }
-        LoxScanner scanner = new LoxScanner(fileContents);
-        List<LoxScanner.Token> tokens = scanner.scanTokens();
         switch (command) {
             case "tokenize":
+                LoxScanner scanner = new LoxScanner(fileContents);
+                List<LoxScanner.Token> tokens = scanner.scanTokens();
                 for (LoxScanner.Token token : tokens) {
                     System.out.println(token);
                 }
                 break;
             case "parse":
+                LoxScanner scanner = new LoxScanner(fileContents);
+                List<LoxScanner.Token> tokens = scanner.scanTokens();
                 Parser parser = new Parser(tokens);
-                Expr expression = parser.parse();
-                if (expression != null) {
+                List<Stmt> statements = parser.parse();
+                if (statements != null) {
                     System.out.println(new AstPrinter().print(expression));
                 }
                 break;
             case "evaluate":
+                LoxScanner scanner = new LoxScanner(fileContents);
+                List<LoxScanner.Token> tokens = scanner.scanTokens();
+                Parser parser = new Parser(tokens);
+                List<Stmt> statements = parser.parse();
                 Interpreter interpreter = new Interpreter();
                 interpreter.interpret(new Parser(tokens).parse());
                 break;
