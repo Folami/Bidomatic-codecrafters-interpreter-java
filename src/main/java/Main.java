@@ -26,8 +26,8 @@ public class Main {
                 }
                 break;
             case "parse":
-                LoxScanner scanner = new LoxScanner(fileContents);
-                List<LoxScanner.Token> tokens = scanner.scanTokens();
+                // LoxScanner scanner = new LoxScanner(fileContents);
+                // List<LoxScanner.Token> tokens = scanner.scanTokens();
                 Parser parser = new Parser(tokens);
                 List<Stmt> statements = parser.parse();
                 if (statements != null) {
