@@ -46,6 +46,11 @@ class Interpreter implements Expr.Visitor<Object>,
         return evaluate(expr.expression);
     }
 
+    @Override
+    public Object visitVariableExpr(Expr.Variable expr) {
+        return environment.get(expr.name);
+    }
+
     private Object evaluate(Expr expr) {
         return expr.accept(this);
     }
@@ -133,4 +138,6 @@ class Interpreter implements Expr.Visitor<Object>,
         if (left instanceof Double && right instanceof Double) return;
         throw new RuntimeError(operator, "Operands must be numbers.");
     }
+
+    private final Environment environment = new Environment();
 }
