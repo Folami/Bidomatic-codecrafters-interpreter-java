@@ -7,7 +7,7 @@ class Parser {
     private int current = 0;
     private static class ParseError extends RuntimeException {}
 
-    Parser(Token> tokens) {
+    Parser(List<Token> tokens) {
         this.tokens = tokens;
     }
 

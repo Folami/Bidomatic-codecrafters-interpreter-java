@@ -33,7 +33,7 @@ class Scanner {
             keywords.put("while", TokenType.WHILE);
         }
 
-        LoxScanner(String source) {
+        Scanner(String source) {
             this.source = source;
         }
 
