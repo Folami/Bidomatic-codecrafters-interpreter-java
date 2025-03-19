@@ -6,7 +6,9 @@ import java.util.*;
 
 
 public class Main {
+
     public static void main(String[] args) {
+        private static final Interpreter interpreter = new Interpreter();
         if (args.length < 2) {
             System.err.println("Usage: ./your_program.sh <command> <filename>");
             System.exit(1);
@@ -22,8 +24,7 @@ public class Main {
             System.exit(1);
         }
 
-        Lox lox = new Lox();
-        private static final Interpreter interpreter = new Interpreter();
+        Lox lox = new Lox();    
         switch (command) {
             case "tokenize":
                 List<Token> tokens = lox.runLoxScanner(fileContents);

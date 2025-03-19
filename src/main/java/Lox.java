@@ -5,7 +5,7 @@ import java.nio.*;
 import java.util.*;
 
 public class Lox {
-    private static final Interpreter interpreter = new Interpreter();
+    
     static boolean hadError = false;
     static boolean hadRuntimeError = false;
 
@@ -33,12 +33,9 @@ public class Lox {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
         Parser parser = new Parser(tokens);
-        List<Stmt> statements = parser.parse();
         // System.out.println(new AstPrinter().print(expression));
-        for (Stmt statement : statements) {
-            System.out.println(statement);
-        }
-        return null;
+        List<Stmt> statements = parser.parse();
+        return statements;
     }
 
     protected static void runLoxInterpreter(String source) {
@@ -46,9 +43,7 @@ public class Lox {
         List<Token> tokens = scanner.scanTokens();
         Parser parser = new Parser(tokens);
         List<Stmt> statements = parser.parse();
-        // System.out.println(new AstPrinter().print(expression));
-        interpreter.interpret(statements);
-        return null;
+        return statements;
     }
 
     /* 
