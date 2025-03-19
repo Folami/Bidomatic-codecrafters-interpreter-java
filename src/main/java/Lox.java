@@ -23,13 +23,10 @@ public class Lox {
     }
     */
 
-    protected static void runLoxScanner(String source) {
+    protected static List<Token> runLoxScanner(String source) {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
-        for (Token token : tokens) {
-            System.out.println(token);
-        }
-        return null;
+        return tokens;
     }
 
     protected static void runLoxParser(String source) {
