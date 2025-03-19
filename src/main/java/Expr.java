@@ -7,7 +7,7 @@ abstract class Expr {
         R visitAssignExpr(Assign expr);
         R visitBinaryExpr(Binary expr);
         // R visitCallExpr(Call expr);
-        R visitGetExpr(Get expr);
+        // R visitGetExpr(Get expr);
         R visitGroupingExpr(Grouping expr);
         R visitLiteralExpr(Literal expr);
         // R visitLogicalExpr(Logical expr);
@@ -116,6 +116,7 @@ abstract class Expr {
         final Expr value;
     }
 
+    /*
     //> expr-get
     static class Get extends Expr {
         Get(Expr object, Token name) {
@@ -132,7 +133,6 @@ abstract class Expr {
         final Token name;
     }
 
-    /* 
     //> expr-call
     static class Call extends Expr {
         Call(Expr callee, Token paren, List<Expr> arguments) {
