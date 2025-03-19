@@ -1,4 +1,4 @@
-// package com.craftinginterpreters.lox;
+package com.craftinginterpreters.lox;
 
 import java.util.*;
 
@@ -18,17 +18,17 @@ class Environment {
         values.put(name, value);
     }
 
-    Object get(Main.LoxScanner.Token name) {
-        if (values.containsKey(name.lexeme))
+    Object get(Token name) {
+        if (values.containsKey(name.lexeme)) {
             return values.get(name.lexeme);
-
-        if (enclosing != null) 
+        }
+        if (enclosing != null)  {
             return enclosing.get(name);
-    
+        }
         throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
     }
 
-    void assign(Main.LoxScanner.Token name, Object value) {
+    void assign(Token name, Object value) {
         if (values.containsKey(name.lexeme)) {
             values.put(name.lexeme, value);
             return;

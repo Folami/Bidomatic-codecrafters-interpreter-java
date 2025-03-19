@@ -1,6 +1,7 @@
-// package com.craftinginterpreters.lox;
+package com.craftinginterpreters.lox;
 
 import java.util.List;
+
 
 abstract class Stmt {
     interface Visitor<R> {
@@ -124,13 +125,13 @@ abstract class Stmt {
             return visitor.visitReturnStmt(this);
         }
 
-        final Main.LoxScanner.Token keyword;
+        final Token keyword;
         final Expr value;
     }
 
     //> stmt-var
     static class Var extends Stmt {
-        Var(Main.LoxScanner.Token name, Expr initializer) {
+        Var(Token name, Expr initializer) {
             this.name = name;
             this.initializer = initializer;
         }
@@ -140,7 +141,7 @@ abstract class Stmt {
             return visitor.visitVarStmt(this);
         }
 
-        final Main.LoxScanner.Token name;
+        final Token name;
         final Expr initializer;
     }
 

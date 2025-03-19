@@ -1,39 +1,20 @@
-// package com.craftinginterpreters.lox;
+package com.craftinginterpreters.lox;
 
 import java.util.List;
 
-class Interpreter implements Expr.Visitor<Object>,
+class Interpreter implements Expr.Visitor<Object>, 
                              Stmt.Visitor<Void> {
-    /*
-    void interpret(Expr expression) { 
-        try {
-            Object value = evaluate(expression);
-            System.out.println(stringify(value));
-        } catch (RuntimeError error) {
-            Main.LoxScanner.runtimeError(error);
-        }
-    }
-    */
+
+    private Environment environment = new Environment();
+
     void interpret(List<Stmt> statements) {
         try {
             for (Stmt statement : statements) {
                 execute(statement);
             }
         } catch (RuntimeError error) {
-            Main.LoxScanner.runtimeError(error);
+            Lox.runtimeError(error);
         }
-    }
-
-    private String stringify(Object object) {
-        if (object == null) return "nil";
-        if (object instanceof Double) {
-            String text = object.toString();
-            if (text.endsWith(".0")) {
-                text = text.substring(0, text.length() - 2);
-            }
-            return text;
-        }
-        return object.toString();
     }
 
     @Override
@@ -44,55 +25,6 @@ class Interpreter implements Expr.Visitor<Object>,
     @Override
     public Object visitGroupingExpr(Expr.Grouping expr) {
         return evaluate(expr.expression);
-    }
-
-    @Override
-    public Object visitVariableExpr(Expr.Variable expr) {
-        return environment.get(expr.name);
-    }
-
-    @Override
-    public Object visitThisExpr(Expr.This expr) {
-        return lookupVariable(expr.keyword, expr);
-    }
-
-    @Override
-    public Object visitSuperExpr(Expr.Super expr) {
-        int distance = locals.get(expr);
-        LoxClass superclass = (LoxClass)environment.getAt(
-            distance, "super");
-    //> super-find-this
-
-        LoxInstance object = (LoxInstance)environment.getAt(
-            distance - 1, "this");
-    //< super-find-this
-    //> super-find-method
-
-        LoxFunction method = superclass.findMethod(expr.method.lexeme);
-    //> super-no-method
-
-        if (method == null) {
-        throw new RuntimeError(expr.method,
-            "Undefined property '" + expr.method.lexeme + "'.");
-        }
-
-    //< super-no-method
-        return method.bind(object);
-    //< super-find-method
-    }
-
-    private Object lookupVariable(Main.LoxScanner.Token name, Expr expr) {
-        Object value = environment.get(name);
-        if (value != null) return value;
-        throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
-    }
-
-    private Object evaluate(Expr expr) {
-        return expr.accept(this);
-    }
-
-    private void execute(Stmt stmt) {
-        stmt.accept(this);
     }
 
     @Override
@@ -109,21 +41,15 @@ class Interpreter implements Expr.Visitor<Object>,
         return null;
     }
 
-    private boolean isTruthy(Object object) {
-        if (object == null) return false;
-        if (object instanceof Boolean) return (boolean)object;
-        return true;
-    }
-
     @Override
     public Object visitBinaryExpr(Expr.Binary expr) {
         Object left = evaluate(expr.left);
-        Object right = evaluate(expr.right); 
+        Object right = evaluate(expr.right);
 
         switch (expr.operator.type) {
-            case BANG_EQUAL: 
+            case BANG_EQUAL:
                 return !isEqual(left, right);
-            case EQUAL_EQUAL: 
+            case EQUAL_EQUAL:
                 return isEqual(left, right);
             case GREATER:
                 checkNumberOperands(expr.operator, left, right);
@@ -143,7 +69,7 @@ class Interpreter implements Expr.Visitor<Object>,
             case PLUS:
                 if (left instanceof Double && right instanceof Double) {
                     return (double)left + (double)right;
-                } 
+                }
                 if (left instanceof String && right instanceof String) {
                     return (String)left + (String)right;
                 }
@@ -159,14 +85,117 @@ class Interpreter implements Expr.Visitor<Object>,
         return null;
     }
 
+    @Override
+    public Void visitExpressionStmt(Stmt.Expression stmt) {
+        evaluate(stmt.expression);
+        return null;
+    }
+
+    @Override
+    public Void visitPrintStmt(Stmt.Print stmt) {
+        Object value = evaluate(stmt.expression);
+        System.out.println(stringify(value));
+        return null;
+    }
+
+    @Override
+    public Void visitVarStmt(Stmt.Var stmt) {
+        Object value = null;
+        if (stmt.initializer != null) {
+            value = evaluate(stmt.initializer);
+        }
+        environment.define(stmt.name.lexeme, value);
+        return null;
+    }
+
+    @Override
+    public Object visitAssignExpr(Expr.Assign expr) {
+        Object value = evaluate(expr.value);
+        environment.assign(expr.name, value);
+        return value;
+    }
+
+    @Override
+    public Object visitVariableExpr(Expr.Variable expr) {
+        return environment.get(expr.name);
+    }
+
+    @Override
+    public Object visitThisExpr(Expr.This expr) {
+        return lookupVariable(expr.keyword, expr);
+    }
+
+    private Object lookupVariable(Main.LoxScanner.Token name, Expr expr) {
+        Object value = environment.get(name);
+        if (value != null) return value;
+        throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
+    }
+
+    private Object evaluate(Expr expr) {
+        return expr.accept(this);
+    }
+
+    private void execute(Stmt stmt) {
+        stmt.accept(this);
+    }
+
+    @Override
+    public Void visitBlockStmt(Stmt.Block stmt) {
+        executeBlock(stmt.statements, new Environment(environment));
+        return null;
+    }
+
+    private String stringify(Object object) {
+        if (object == null)
+            return "nil";
+
+        if (object instanceof Double) {
+            String text = object.toString();
+            if (text.endsWith(".0")) {
+                text = text.substring(0, text.length() - 2);
+            }
+            return text;
+        }
+        return object.toString();
+    }
+
+    private boolean isTruthy(Object object) {
+        if (object == null)
+            return false;
+
+        if (object instanceof Boolean) 
+            return (boolean)object;
+
+        return true;
+    }
+
     private boolean isEqual(Object a, Object b) {
-        if (a == null && b == null) return true;
-        if (a == null) return false;
+        if (a == null && b == null) 
+            return true;
+
+        if (a == null) 
+            return false;
+
         return a.equals(b);
     }
 
-    private void checkNumberOperand(Main.LoxScanner.Token operator, Object operand) {
-        if (operand instanceof Double) return;
+    void executeBlock(List<Stmt> statements,
+                    Environment environment) {
+        Environment previous = this.environment;
+        try {
+            this.environment = environment;
+            for (Stmt statement : statements) {
+                execute(statement);
+            }
+        } finally {
+            this.environment = previous;
+        }
+    }
+
+    private void checkNumberOperand(Token operator, Object operand) {
+        if (operand instanceof Double) 
+            return;
+
         throw new RuntimeError(operator, "Operand must be a number.");
     }
 
