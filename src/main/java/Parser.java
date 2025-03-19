@@ -217,7 +217,7 @@ class Parser {
     private void synchronize() {
         advance();
         while (!isAtEnd()) {
-            if (previous().type == Main.LoxScanner.TokenType.SEMICOLON) {
+            if (previous().type == TokenType.SEMICOLON) {
                 return;
             }
             switch (peek().type) {

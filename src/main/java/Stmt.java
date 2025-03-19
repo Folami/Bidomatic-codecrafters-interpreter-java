@@ -33,7 +33,7 @@ abstract class Stmt {
 
     //> stmt-class
     static class Class extends Stmt {
-        Class(Main.LoxScanner.Token name, Expr.Variable superclass, List<Stmt.Function> methods) {
+        Class(Token name, Expr.Variable superclass, List<Stmt.Function> methods) {
             this.name = name;
             this.superclass = superclass;
             this.methods = methods;
@@ -44,7 +44,7 @@ abstract class Stmt {
             return visitor.visitClassStmt(this);
         }
 
-        final Main.LoxScanner.Token name;
+        final Token name;
         final Expr.Variable superclass;
         final List<Stmt.Function> methods;
     }
@@ -65,7 +65,7 @@ abstract class Stmt {
 
     //> stmt-function
     static class Function extends Stmt {
-        Function(Main.LoxScanner.Token name, List<Main.LoxScanner.Token> params, List<Stmt> body) {
+        Function(Token name, List<Token> params, List<Stmt> body) {
             this.name = name;
             this.params = params;
             this.body = body;
@@ -76,8 +76,8 @@ abstract class Stmt {
             return visitor.visitFunctionStmt(this);
         }
 
-        final Main.LoxScanner.Token name;
-        final List<Main.LoxScanner.Token> params;
+        final Token name;
+        final List<Token> params;
         final List<Stmt> body;
     }
 
@@ -115,7 +115,7 @@ abstract class Stmt {
 
     //> stmt-return
     static class Return extends Stmt {
-        Return(Main.LoxScanner.Token keyword, Expr value) {
+        Return(Token keyword, Expr value) {
             this.keyword = keyword;
             this.value = value;
         }
