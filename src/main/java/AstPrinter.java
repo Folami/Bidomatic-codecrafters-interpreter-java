@@ -40,6 +40,11 @@ class AstPrinter implements Expr.Visitor<String> {
         return "this";
     }
 
+    @Override
+    public String visitAssignExpr(Expr.Assign expr) {
+        return parenthesize("assign " + expr.name.lexeme, expr.value);
+    }
+
     private String parenthesize(String name, Expr... exprs) {
         StringBuilder builder = new StringBuilder();
         builder.append("(").append(name);
