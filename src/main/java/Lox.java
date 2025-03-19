@@ -23,7 +23,7 @@ public class Lox {
     }
     */
 
-    private static void runLoxScanner(String source) {
+    protected static void runLoxScanner(String source) {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
         for (Token token : tokens) {
@@ -32,7 +32,7 @@ public class Lox {
         return null;
     }
 
-    private static void runLoxParser(String source) {
+    protected static void runLoxParser(String source) {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
         Parser parser = new Parser(tokens);
@@ -44,7 +44,7 @@ public class Lox {
         return null;
     }
 
-    private static void runLoxInterpreter(String source) {
+    protected static void runLoxInterpreter(String source) {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
         Parser parser = new Parser(tokens);

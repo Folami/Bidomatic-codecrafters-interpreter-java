@@ -2,7 +2,7 @@ package com.craftinginterpreters.lox;
 
 import java.util.List;
 
-class Interpreter implements Expr.Visitor<Object>, 
+class Interpreter implements Expr.Visitor<Object>,
                              Stmt.Visitor<Void> {
 
     private Environment environment = new Environment();
@@ -125,7 +125,7 @@ class Interpreter implements Expr.Visitor<Object>,
         return lookupVariable(expr.keyword, expr);
     }
 
-    private Object lookupVariable(Main.LoxScanner.Token name, Expr expr) {
+    private Object lookupVariable(Token name, Expr expr) {
         Object value = environment.get(name);
         if (value != null) return value;
         throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
@@ -199,10 +199,8 @@ class Interpreter implements Expr.Visitor<Object>,
         throw new RuntimeError(operator, "Operand must be a number.");
     }
 
-    private void checkNumberOperands(Main.LoxScanner.Token operator, Object left, Object right) {
+    private void checkNumberOperands(Token operator, Object left, Object right) {
         if (left instanceof Double && right instanceof Double) return;
         throw new RuntimeError(operator, "Operands must be numbers.");
     }
-
-    private final Environment environment = new Environment();
 }

@@ -1,6 +1,5 @@
 package com.craftinginterpreters.lox;
 
-
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
