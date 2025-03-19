@@ -23,17 +23,25 @@ public class Main {
         }
 
         Lox lox = new Lox();
+        private static final Interpreter interpreter = new Interpreter();
         switch (command) {
             case "tokenize":
-                lox.runLoxScanner(fileContents);
+                List<Token> tokens = lox.runLoxScanner(fileContents);
+                for (Token token : tokens) {
+                    System.out.println(token);
+                }
                 break;
 
             case "parse":
-                lox.runLoxParser(fileContents);
+                List<Stmt> statements = lox.runLoxParser(fileContents);
+                for (Stmt statement : statements) {
+                    System.out.println(statement);
+                }
                 break;
 
             case "evaluate":
-                lox.runLoxInterpreter(fileContents);
+                List<Stmt> statements = lox.runLoxInterpreter(fileContents);
+                interpreter.interpret(statements);
                 break;
 
             default:
