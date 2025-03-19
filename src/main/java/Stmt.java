@@ -6,7 +6,7 @@ import java.util.List;
 abstract class Stmt {
     interface Visitor<R> {
         R visitBlockStmt(Block stmt);
-        R visitClassStmt(Class stmt);
+        // R visitClassStmt(Class stmt);
         R visitExpressionStmt(Expression stmt);
         // R visitFunctionStmt(Function stmt);
         // R visitIfStmt(If stmt);
@@ -31,24 +31,6 @@ abstract class Stmt {
         final List<Stmt> statements;
     }
 
-    //> stmt-class
-    static class Class extends Stmt {
-        Class(Token name, Expr.Variable superclass, List<Stmt.Function> methods) {
-            this.name = name;
-            this.superclass = superclass;
-            this.methods = methods;
-        }
-
-        @Override
-        <R> R accept(Visitor<R> visitor) {
-            return visitor.visitClassStmt(this);
-        }
-
-        final Token name;
-        final Expr.Variable superclass;
-        final List<Stmt.Function> methods;
-    }
-
     //> stmt-expression
     static class Expression extends Stmt {
         Expression(Expr expression) {
@@ -61,24 +43,6 @@ abstract class Stmt {
         }
 
         final Expr expression;
-    }
-
-    //> stmt-function
-    static class Function extends Stmt {
-        Function(Token name, List<Token> params, List<Stmt> body) {
-            this.name = name;
-            this.params = params;
-            this.body = body;
-        }
-
-        @Override
-        <R> R accept(Visitor<R> visitor) {
-            return visitor.visitFunctionStmt(this);
-        }
-
-        final Token name;
-        final List<Token> params;
-        final List<Stmt> body;
     }
 
     //> stmt-print
@@ -130,6 +94,42 @@ abstract class Stmt {
     }
 
     /*
+
+        //> stmt-function
+        static class Function extends Stmt {
+            Function(Token name, List<Token> params, List<Stmt> body) {
+                this.name = name;
+                this.params = params;
+                this.body = body;
+            }
+
+            @Override
+            <R> R accept(Visitor<R> visitor) {
+                return visitor.visitFunctionStmt(this);
+            }
+
+            final Token name;
+            final List<Token> params;
+            final List<Stmt> body;
+        }
+        //> stmt-class
+        static class Class extends Stmt {
+            Class(Token name, Expr.Variable superclass, List<Stmt.Function> methods) {
+                this.name = name;
+                this.superclass = superclass;
+                this.methods = methods;
+            }
+
+            @Override
+            <R> R accept(Visitor<R> visitor) {
+                return visitor.visitClassStmt(this);
+            }
+
+            final Token name;
+            final Expr.Variable superclass;
+            final List<Stmt.Function> methods;
+        }
+
         //> stmt-if
         static class If extends Stmt {
             If(Expr condition, Stmt thenBranch, Stmt elseBranch) {
