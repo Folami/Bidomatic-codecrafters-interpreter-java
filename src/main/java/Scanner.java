@@ -37,7 +37,7 @@ class Scanner {
             this.source = source;
         }
 
-        private static List<Token> scanTokens() {
+        protected static List<Token> scanTokens() {
             while (!isAtEnd()) {
                 start = current;
                 scanToken();

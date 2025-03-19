@@ -1,18 +1,17 @@
 package com.craftinginterpreters.lox;
 
 import java.util.List;
-// import Main.LoxScanner.Token;
 
 abstract class Expr {
     interface Visitor<R> {
         R visitAssignExpr(Assign expr);
         R visitBinaryExpr(Binary expr);
-        R visitCallExpr(Call expr);
+        // R visitCallExpr(Call expr);
         R visitGetExpr(Get expr);
         R visitGroupingExpr(Grouping expr);
         R visitLiteralExpr(Literal expr);
         R visitLogicalExpr(Logical expr);
-        R visitSetExpr(Set expr);
+        // R visitSetExpr(Set expr);
         // R visitSuperExpr(Super expr);
         R visitThisExpr(This expr);
         R visitUnaryExpr(Unary expr);
@@ -170,6 +169,8 @@ abstract class Expr {
         final Expr right;
     }
 
+    
+    /* 
     //> expr-set
     static class Set extends Expr {
         Set(Expr object, Token name, Expr value) {
@@ -189,7 +190,6 @@ abstract class Expr {
     }
 
     //> expr-super
-    /* 
     static class Super extends Expr {
         Super(Token keyword, Token method) {
             this.keyword = keyword;
