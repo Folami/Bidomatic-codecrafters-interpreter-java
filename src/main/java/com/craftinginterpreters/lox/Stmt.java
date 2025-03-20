@@ -13,7 +13,7 @@ abstract class Stmt {
         R visitPrintStmt(Print stmt);
         // R visitReturnStmt(Return stmt);
         R visitVarStmt(Var stmt);
-        R visitWhileStmt(While stmt);
+        // R visitWhileStmt(While stmt);
     }
 
     // Nested Stmt classes here...
