@@ -144,7 +144,7 @@ class Interpreter implements Expr.Visitor<Object>,
         executeBlock(stmt.statements, new Environment(environment));
         return null;
     }
-
+    /* 
     @Override
     public Void visitWhileStmt(Stmt.While stmt) {
         while (isTruthy(evaluate(stmt.condition))) {
@@ -152,7 +152,7 @@ class Interpreter implements Expr.Visitor<Object>,
         }
         return null;
     }
-
+    */
     private String stringify(Object object) {
         if (object == null)
             return "nil";

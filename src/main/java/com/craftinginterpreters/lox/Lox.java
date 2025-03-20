@@ -5,7 +5,7 @@ import java.nio.*;
 import java.util.*;
 
 public class Lox {
-    protected static final Interpreter interpreter = new Interpreter();
+    static final Interpreter interpreter = new Interpreter();
     static boolean hadError = false;
     static boolean hadRuntimeError = false;
 

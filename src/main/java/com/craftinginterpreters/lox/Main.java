@@ -41,7 +41,7 @@ public class Main {
 
             case "evaluate":
                 List<Stmt> statementsToInterpret = lox.runLoxInterpreter(fileContents);
-                lox.interpreter.interpret(statementsToInterpret);
+                lox.interpreter.interpret(statements);
                 break;
 
             default:
