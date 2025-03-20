@@ -11,7 +11,15 @@ class Parser {
         this.tokens = tokens;
     }
 
-    List<Stmt> parse() {
+    Expr parseExpression() {
+        try {
+            return expression();
+        } catch (ParseError error) {
+            return null;
+        }
+    }
+
+    List<Stmt> parseStatements() {
         List<Stmt> statements = new ArrayList<>();
             while (!isAtEnd()) {
                 statements.add(declaration());
