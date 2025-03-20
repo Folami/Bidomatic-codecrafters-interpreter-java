@@ -29,11 +29,11 @@ public class Lox {
         return tokens;
     }
 
-    protected static List<Expr> runLoxParser(String source) {
+    protected static Expr runLoxParser(String source) {
         List<Token> tokens = runLoxScanner(source);
         Parser parser = new Parser(tokens);
-        List<Expr> expressions = parser.parseExpression();
-        return expressions;
+        Expr expression = parser.parseExpression();
+        return expression;
     }
 
     protected static List<Expr> runLoxInterpreter(String source) {

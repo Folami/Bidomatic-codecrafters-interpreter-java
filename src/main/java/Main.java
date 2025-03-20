@@ -33,10 +33,8 @@ public class Main {
                 break;
 
             case "parse":
-                List<Expr> expressions = lox.runLoxParser(fileContents);
-                for (Expr expression : expressions) {
-                    System.out.println(new AstPrinter().print(expression));
-                }
+                Expr expression = lox.runLoxParser(fileContents);
+                System.out.println(new AstPrinter().print(expression));
                 break;
 
             case "evaluate":
