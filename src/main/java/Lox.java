@@ -1,4 +1,4 @@
-// package com.craftinginterpreters.lox;
+package com.craftinginterpreters.lox;
 
 import java.io.*;
 import java.nio.*;
@@ -29,20 +29,22 @@ public class Lox {
         return tokens;
     }
 
-    protected static List<Stmt> runLoxParser(String source) {
-        Scanner scanner = new Scanner(source);
-        List<Token> tokens = scanner.scanTokens();
+    protected static List<Expr> runLoxParser(String source) {
+        List<Token> tokens = runLoxScanner(source);
         Parser parser = new Parser(tokens);
-        // System.out.println(new AstPrinter().print(expression));
-        List<Stmt> statements = parser.parse();
-        return statements;
+        List<Expr> expressions = parser.parseExpression();
+        return expressions;
     }
 
-    protected static List<Stmt> runLoxInterpreter(String source) {
-        Scanner scanner = new Scanner(source);
-        List<Token> tokens = scanner.scanTokens();
+    protected static List<Expr> runLoxInterpreter(String source) {
+        List<Expr> expressions = runLoxParser(source);
+        return expressions;
+    }
+
+    protected static List<Stmt> runLox(String source) {
+        List<Token> tokens = runLoxScanner(source);
         Parser parser = new Parser(tokens);
-        List<Stmt> statements = parser.parse();
+        List<Stmt> statements = parser.parseStatements();
         return statements;
     }
 
