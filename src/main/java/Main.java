@@ -38,8 +38,8 @@ public class Main {
                 break;
 
             case "evaluate":
-                Expr expressionsToInterpret = lox.runLoxInterpreter(fileContents);
-                lox.interpreter.interpretExpression(expression);
+                Expr expressionToInterpret = lox.runLoxInterpreter(fileContents);
+                lox.interpreter.interpretExpression(expressionToInterpret);
                 break;
 
             case "run":

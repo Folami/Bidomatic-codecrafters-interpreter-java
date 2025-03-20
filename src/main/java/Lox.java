@@ -37,8 +37,8 @@ public class Lox {
     }
 
     protected static List<Expr> runLoxInterpreter(String source) {
-        List<Expr> expressions = runLoxParser(source);
-        return expressions;
+        Expr expression = runLoxParser(source);
+        return expression;
     }
 
     protected static List<Stmt> runLox(String source) {
