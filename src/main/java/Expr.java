@@ -10,7 +10,7 @@ abstract class Expr {
         // R visitGetExpr(Get expr);
         R visitGroupingExpr(Grouping expr);
         R visitLiteralExpr(Literal expr);
-        // R visitLogicalExpr(Logical expr);
+        R visitLogicalExpr(Logical expr);
         // R visitSetExpr(Set expr);
         // R visitSuperExpr(Super expr);
         R visitThisExpr(This expr);
@@ -116,6 +116,24 @@ abstract class Expr {
         final Expr value;
     }
 
+    //> expr-logical
+    static class Logical extends Expr {
+        Logical(Expr left, Token operator, Expr right) {
+            this.left = left;
+            this.operator = operator;
+            this.right = right;
+        }
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitLogicalExpr(this);
+        }
+
+        final Expr left;
+        final Token operator;
+        final Expr right;
+    }
+
     /*
     //> expr-get
     static class Get extends Expr {
@@ -149,24 +167,6 @@ abstract class Expr {
         final Expr callee;
         final Token paren;
         final List<Expr> arguments;
-    }
-
-    //> expr-logical
-    static class Logical extends Expr {
-        Logical(Expr left, Token operator, Expr right) {
-            this.left = left;
-            this.operator = operator;
-            this.right = right;
-        }
-
-        @Override
-        <R> R accept(Visitor<R> visitor) {
-            return visitor.visitLogicalExpr(this);
-        }
-
-        final Expr left;
-        final Token operator;
-        final Expr right;
     }
 
     //> expr-set
