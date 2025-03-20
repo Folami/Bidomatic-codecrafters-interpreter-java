@@ -44,6 +44,11 @@ public class Main {
                 lox.interpreter.interpret(statementsToInterpret);
                 break;
 
+            case "run":
+                List<Stmt> statementsToRun = lox.runLoxInterpreter(fileContents);
+                lox.interpreter.interpret(statementsToRun);
+                break;
+
             default:
                 System.err.println("Unknown command: " + command);
                 System.exit(1);
