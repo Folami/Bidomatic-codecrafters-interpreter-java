@@ -46,7 +46,7 @@ public class Main {
 
             case "run":
                 List<Stmt> statementsToRun = lox.runLoxInterpreter(fileContents);
-                lox.interpreter.interpret(statementsToRun);
+                lox.interpreter.interpretStatements(statementsToRun);
                 break;
 
             default:

@@ -7,7 +7,16 @@ class Interpreter implements Expr.Visitor<Object>,
 
     private Environment environment = new Environment();
 
-    void interpret(List<Stmt> statements) {
+    void interpretExpression(Expr expr) {
+        try {
+            Object value = evaluate(expr);
+            System.out.println(stringify(value));
+        } catch (RuntimeError error) {
+            Lox.runtimeError(error);
+        }
+    }
+
+    void interpretStatements(List<Stmt> statements) {
         try {
             for (Stmt statement : statements) {
                 execute(statement);
