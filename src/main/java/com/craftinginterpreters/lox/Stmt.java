@@ -77,23 +77,22 @@ abstract class Stmt {
         final Expr initializer;
     }
 
-    //> stmt-while
-    static class While extends Stmt {
-        While(Expr condition, Stmt body) {
-            this.condition = condition;
-            this.body = body;
-        }
-
-        @Override
-        <R> R accept(Visitor<R> visitor) {
-            return visitor.visitWhileStmt(this);
-        }
-
-        final Expr condition;
-        final Stmt body;
-    }
-
     /*
+        //> stmt-while
+        static class While extends Stmt {
+            While(Expr condition, Stmt body) {
+                this.condition = condition;
+                this.body = body;
+            }
+
+            @Override
+            <R> R accept(Visitor<R> visitor) {
+                return visitor.visitWhileStmt(this);
+            }
+
+            final Expr condition;
+            final Stmt body;
+        }
 
         //> stmt-function
         static class Function extends Stmt {
