@@ -4,9 +4,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
-
 public class Main {
-
     public static void main(String[] args) {
         if (args.length < 2) {
             System.err.println("Usage: ./your_program.sh <command> <filename>");
@@ -34,17 +32,23 @@ public class Main {
 
             case "parse":
                 Expr expression = lox.runLoxParser(fileContents);
-                System.out.println(new AstPrinter().print(expression));
+                if (!Lox.hadError) {
+                    System.out.println(new AstPrinter().print(expression));
+                }
                 break;
 
             case "evaluate":
                 Expr expressionToInterpret = lox.runLoxInterpreter(fileContents);
-                lox.interpreter.interpretExpression(expressionToInterpret);
+                if (!Lox.hadError) {
+                    lox.interpreter.interpretExpression(expressionToInterpret);
+                }
                 break;
 
             case "run":
                 List<Stmt> statementsToRun = lox.runLox(fileContents);
-                lox.interpreter.interpretStatements(statementsToRun);
+                if (!Lox.hadError) {
+                    lox.interpreter.interpretStatements(statementsToRun);
+                }
                 break;
 
             default:
@@ -52,10 +56,12 @@ public class Main {
                 System.exit(1);
         }
 
-        if (Lox.hadError) 
+        if (Lox.hadError) {
             System.exit(65);
+        }
 
-        if (Lox.hadRuntimeError)
+        if (Lox.hadRuntimeError) {
             System.exit(70);
+        }
     }
 }
