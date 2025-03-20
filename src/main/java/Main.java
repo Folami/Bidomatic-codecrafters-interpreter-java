@@ -26,7 +26,7 @@ public class Main {
         Lox lox = new Lox();
         switch (command) {
             case "tokenize":
-                List<Token> tokens = lox.ruLoxScanner(fileContents);
+                List<Token> tokens = lox.runLoxScanner(fileContents);
                 for (Token token : tokens) {
                     System.out.println(token);
                 }
