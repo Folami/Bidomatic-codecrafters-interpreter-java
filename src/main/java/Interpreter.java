@@ -1,6 +1,6 @@
 // package com.craftinginterpreters.lox;
 
-import java.util.List;
+import java.util.*;
 
 class Interpreter implements Expr.Visitor<Object>,
                              Stmt.Visitor<Void> {
@@ -153,7 +153,7 @@ class Interpreter implements Expr.Visitor<Object>,
 
     @Override
     public Void visitFunctionStmt(Stmt.Function stmt) {
-        LoxFunction function = new LoxFunction(stmt, environment);
+        LoxFunction function = new LoxFunction(stmt);
         environment.define(stmt.name.lexeme, function);
         return null;
     }
