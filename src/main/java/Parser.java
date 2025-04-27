@@ -5,6 +5,7 @@ import java.util.*;
 class Parser {
     private final List<Token> tokens;
     private int current = 0;
+
     private static class ParseError extends RuntimeException {}
 
     Parser(List<Token> tokens) {
@@ -25,6 +26,25 @@ class Parser {
                 statements.add(declaration());
             }
         return statements;
+    }
+
+    private Expr expression() {
+        return assignment();
+    }
+
+    private Expr assignment() {
+        // Expr expr = equality();
+        Expr expr = or();
+        if (match(TokenType.EQUAL)) {
+            Token equals = previous();
+            Expr value = assignment();
+            if (expr instanceof Expr.Variable) {
+                Token name = ((Expr.Variable)expr).name;
+                return new Expr.Assign(name, value);
+            }
+            error(equals, "Invalid assignment target.");
+        }
+        return expr;
     }
 
     private Stmt declaration() {
@@ -126,25 +146,6 @@ class Parser {
         consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.");
         Stmt body = statement();
         return new Stmt.While(condition, body);
-    }
-
-    private Expr expression() {
-        return assignment();
-    }
-
-    private Expr assignment() {
-        // Expr expr = equality();
-        Expr expr = or();
-        if (match(TokenType.EQUAL)) {
-            Token equals = previous();
-            Expr value = assignment();
-            if (expr instanceof Expr.Variable) {
-                Token name = ((Expr.Variable)expr).name;
-                return new Expr.Assign(name, value);
-            }
-            error(equals, "Invalid assignment target.");
-        }
-        return expr;
     }
 
     private Expr or() {

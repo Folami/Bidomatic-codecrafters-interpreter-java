@@ -5,7 +5,6 @@ import java.util.*;
 
 
 class Scanner {
-
         private static String source;
         private static final List<Token> tokens = new ArrayList<>();
         private static int start = 0;
@@ -53,63 +52,33 @@ class Scanner {
         private static void scanToken() {
             char c = advance();
             switch (c) {
-                case '(':
-                    addToken(TokenType.LEFT_PAREN); 
+                // Single-character tokens.
+                case '(' || ')' || '{' || '}' || ',' || '.' || '-' || '+' || ';' || '*' :
+                    handleSingleCharacterToken(c);
                     break;
-                case ')':
-                    addToken(TokenType.RIGHT_PAREN); 
+                // One or two character tokens.
+                case '!' || '=' || '<' || '>' :
+                    handleOneOrTwoCharacterToken(c);
                     break;
-                case '{':
-                    addToken(TokenType.LEFT_BRACE); 
+                // Ternary operator tokens.
+                case '?' || ':' :
+                    addToken(c == '?' ? TokenType.QUESTION : TokenType.COLON);
                     break;
-                case '}':
-                    addToken(TokenType.RIGHT_BRACE); 
-                    break;
-                case ',':
-                    addToken(TokenType.COMMA); 
-                    break;
-                case '.':
-                    addToken(TokenType.DOT); 
-                    break;
-                case '-':
-                    addToken(TokenType.MINUS); 
-                    break;
-                case '+':
-                    addToken(TokenType.PLUS); break;
-                case ';':
-                    addToken(TokenType.SEMICOLON); 
-                    break;
-                case '*':
-                    addToken(TokenType.STAR); break;
-                case '!':
-                    addToken(match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
-                    break;
-                case '=':
-                    addToken(match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
-                    break;
-                case '<':
-                    addToken(match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
-                    break;
-                case '>':
-                    addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
-                    break;
+                // Slash or comment tokens.
                 case '/':
-                    if (match('/')) {
-                        while (peek() != '\n' && !isAtEnd()) 
-                            advance();
-                    } else {
-                        addToken(TokenType.SLASH);
-                    }
+                    handleSlashToken();
                     break;
-                case ' ':
-                case '\r':
-                case '\t':
+                // Whitespace.
+                case ' ' || '\r' || '\t':
+                    // Ignore whitespace.
                     break;
+                // Newline.
                 case '\n':
                     line++;
                     break;
+                // Literal tokens.
                 case '"':
-                    string(); 
+                    string();
                     break;
                 default:
                     if (isDigit(c)) {
@@ -117,9 +86,98 @@ class Scanner {
                     } else if (isAlpha(c)) {
                         identifier();
                     } else {
-                       Lox.error(line, "Unexpected character: " + c);
+                        Lox.error(line, "Unexpected character: " + c);
                     }
                     break;
+            }
+        }
+
+        private static void handleSingleCharacterToken(char c) {
+            switch (c) {
+                case '(':
+                    addToken(TokenType.LEFT_PAREN);
+                    break;
+                case ')':
+                    addToken(TokenType.RIGHT_PAREN);
+                    break;
+                case '{':
+                    addToken(TokenType.LEFT_BRACE);
+                    break;
+                case '}':
+                    addToken(TokenType.RIGHT_BRACE);
+                    break;
+                case ',':
+                    addToken(TokenType.COMMA);
+                    break;
+                case '.':
+                    addToken(TokenType.DOT);
+                    break;
+                case '-':
+                    addToken(TokenType.MINUS);
+                    break;
+                case '+':
+                    addToken(TokenType.PLUS);
+                    break;
+                case ';':
+                    addToken(TokenType.SEMICOLON);
+                    break;
+                case '*':
+                    addToken(TokenType.STAR);
+                    break;
+            }
+        }
+
+        private static void handleOneOrTwoCharacterToken(char c) {
+            switch (c) {
+                case '!':
+                    addToken(
+                        match('=') 
+                        ? TokenType.BANG_EQUAL 
+                        : TokenType.BANG
+                    );
+                    break;
+                case '=':
+                    addToken(
+                        match('=') 
+                        ? TokenType.EQUAL_EQUAL 
+                        : TokenType.EQUAL
+                    );
+                    break;
+                case '<':
+                    addToken(
+                        match('=') 
+                        ? TokenType.LESS_EQUAL 
+                        : TokenType.LESS
+                    );
+                    break;
+                case '>':
+                    addToken(
+                        match('=') 
+                        ? TokenType.GREATER_EQUAL 
+                        : TokenType.GREATER
+                    );
+                    break;
+            }
+        }
+
+        private static void handleSlashToken() {
+            if (match('/')) {
+                while (peek() != '\n' && !isAtEnd()) {
+                    advance();
+                }
+            } else if (match('*')) {
+                // Block comment.
+                while (!isAtEnd() && !(peek() == '*' && peekNext() == '/')) {
+                    if (peek() == '\n') line++;
+                    advance();
+                }
+                // Consume closing '*/'
+                if (!isAtEnd()) {
+                    advance(); // for '*'
+                    advance(); // for '/'
+                }
+            } else {
+                addToken(TokenType.SLASH);
             }
         }
 
@@ -133,14 +191,15 @@ class Scanner {
 
         private static void addToken(TokenType type, Object literal) {
             String text = source.substring(start, current);
-            tokens.add(new Token(type, text, literal, line));
+            Token token = new Token(type, text, literal, line);
+            tokens.add(token);
         }
 
         private static boolean match(char expected) {
             if (isAtEnd()) 
                 return false;
                 
-            if (source.charAt(current) != expected) 
+            if (source.charAt(current) != expected)
                 return false;
 
             current++;
@@ -182,7 +241,9 @@ class Scanner {
                 while (isDigit(peek())) 
                     advance();
             }
-            addToken(TokenType.NUMBER, Double.parseDouble(source.substring(start, current)));
+            // Parse the number as a double.
+            String number = source.substring(start, current);
+            addToken(TokenType.NUMBER, Double.parseDouble(number));
         }
 
         private static char peekNext() {
@@ -212,3 +273,4 @@ class Scanner {
             return isAlpha(c) || isDigit(c);
         }
     }
+}

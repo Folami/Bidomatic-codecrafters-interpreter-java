@@ -12,6 +12,11 @@ enum TokenType {
     GREATER, GREATER_EQUAL,
     LESS, LESS_EQUAL,
 
+    // Tenary operators.
+    QUESTION, COLON,
+    // Two-character tokens.
+    AND_AND, OR_OR,
+
     // Literals.
     IDENTIFIER, STRING, NUMBER,
 
