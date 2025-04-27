@@ -53,37 +53,49 @@ class Scanner {
         char c = advance();
         switch (c) {
             // Single-character tokens.
-            case '(' || ')' || '{' || '}' || ',' || '.' || '-' || '+' || ';' || '*' :
+            case '(':
+            case ')':
+            case '{':
+            case '}':
+            case ',':
+            case '.':
+            case '-':
+            case '+':
+            case ';':
+            case '*':
                 handleSingleCharacterToken(c);
                 break;
             // One or two character tokens.
-            case '!' || '=' || '<' || '>' :
+            case '!':
+            case '=':
+            case '<':
+            case '>':
                 handleOneOrTwoCharacterToken(c);
                 break;
-            // Ternary operator tokens.
-            case '?' || ':' :
-                addToken(c == '?' ? TokenType.QUESTION : TokenType.COLON);
+            // Other cases, for example:
+            case '?':
+            case ':':
+                // Handle these if needed.
                 break;
-            // Slash or comment tokens.
+            // Slash case.
             case '/':
                 handleSlashToken();
                 break;
             // Whitespace.
-            case ' ' || '\r' || '\t':
-                // Ignore whitespace.
+            case ' ':
+            case '\r':
+            case '\t':
                 break;
-            // Newline.
             case '\n':
                 line++;
                 break;
-            // Literal tokens.
             case '"':
                 string();
                 break;
             default:
-                if (isDigit(c)) {
+                if (Character.isDigit(c)) {
                     number();
-                } else if (isAlpha(c)) {
+                } else if (Character.isAlphabetic(c) || c == '_') {
                     identifier();
                 } else {
                     Lox.error(line, "Unexpected character: " + c);
