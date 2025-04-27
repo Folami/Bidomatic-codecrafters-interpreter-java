@@ -23,7 +23,7 @@ public class Lox {
         return expression;
     }
 
-    protected static void runResolver(List<Stmt> statements) {
+    protected static void runResolver(List<Stmt> statements, Interpreter interpreter) {
         Resolver resolver = new Resolver(interpreter);
         resolver.resolve(statements);
     }
