@@ -6,13 +6,13 @@ import java.util.Stack;
 class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     private final Interpreter interpreter;
     private final Stack<Map<String, Boolean>> scopes = new Stack<>();
-    private int currentFunction = FunctionType.NONE;
+    private FunctionType currentFunction = FunctionType.NONE;
 
     Resolver(Interpreter interpreter) {
         this.interpreter = interpreter;
     }
 
-    enum FunctionType {
+    private enum FunctionType {
         NONE,
         FUNCTION,
         INITIALIZER,
@@ -137,6 +137,13 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     @Override
     public Void visitUnaryExpr(Expr.Unary expr) {
         resolve(expr.right);
+        return null;
+    }
+
+    @Override
+    public Void visitThisExpr(Expr.This expr) {
+        // Resolve "this" by looking up its variable in the environment.
+        resolveLocal(expr, expr.keyword);
         return null;
     }
 
