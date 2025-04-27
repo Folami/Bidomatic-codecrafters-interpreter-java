@@ -230,7 +230,7 @@ class Interpreter implements Expr.Visitor<Object>,
 
     @Override
     public Object visitThisExpr(Expr.This expr) {
-        return lookupVariable(expr.keyword, expr);
+        return lookUpVariable(expr.keyword, expr);
     }
 
     private Object evaluate(Expr expr) {
