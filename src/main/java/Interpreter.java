@@ -233,12 +233,6 @@ class Interpreter implements Expr.Visitor<Object>,
         return lookupVariable(expr.keyword, expr);
     }
 
-    private Object lookupVariable(Token name, Expr expr) {
-        Object value = environment.get(name);
-        if (value != null) return value;
-        throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
-    }
-
     private Object evaluate(Expr expr) {
         return expr.accept(this);
     }
@@ -299,16 +293,16 @@ class Interpreter implements Expr.Visitor<Object>,
         return a.equals(b);
     }
 
-    void executeBlock(List<Stmt> statements,
-                    Environment environment) {
+    // Ensure executeBlock correctly sets and restores the environment
+    void executeBlock(List<Stmt> statements, Environment blockEnvironment) { // Renamed param for clarity
         Environment previous = this.environment;
         try {
-            this.environment = environment;
+            this.environment = blockEnvironment; // Switch to the new environment for the block/function
             for (Stmt statement : statements) {
                 execute(statement);
             }
         } finally {
-            this.environment = previous;
+            this.environment = previous; // Restore the previous environment
         }
     }
 
