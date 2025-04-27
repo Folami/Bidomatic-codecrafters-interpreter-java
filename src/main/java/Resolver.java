@@ -43,7 +43,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         resolve(stmt.body);
         return null;
     }
-    /* 
+     
     @Override
     public Void visitFunctionStmt(Stmt.Function stmt) {
         declare(stmt.name);
@@ -51,7 +51,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         resolveFunction(stmt, FunctionType.FUNCTION);
         return null;
     }
-    */
+    /*
     @Override
     public Void visitFunctionStmt(Stmt.Function stmt) {
         // Declare and define the function name before resolving the body.
@@ -63,7 +63,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         currentFunction = enclosingFunction;
         return null;
     }
-
+    */
     @Override
     public Void visitExpressionStmt(Stmt.Expression stmt) {
         resolve(stmt.expression);
