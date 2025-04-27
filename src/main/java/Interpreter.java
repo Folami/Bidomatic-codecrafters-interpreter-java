@@ -216,7 +216,7 @@ class Interpreter implements Expr.Visitor<Object>,
 
     @Override
     public Object visitVariableExpr(Expr.Variable expr) {
-        return lookupVariable(expr.name, expr);
+        return lookUpVariable(expr.name, expr);
     }
 
     private Object lookUpVariable(Token name, Expr expr) {
