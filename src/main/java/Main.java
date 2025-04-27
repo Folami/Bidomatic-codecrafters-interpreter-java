@@ -56,8 +56,7 @@ public class Main {
                 if (!Lox.hadError) {
                     // Run resolver first
                     Resolver resolver = new Resolver(lox.interpreter);
-                    resolver.resolve(statements);
-                    
+                    resolver.resolve(statements);    
                     if (!Lox.hadError) {
                         // Then interpret
                         lox.interpreter.interpretStatements(statements);
