@@ -52,9 +52,16 @@ public class Main {
                 break;
 
             case "run":
-                List<Stmt> statementsToRun = lox.runLox(fileContents);
+                List<Stmt> statements = lox.runLox(fileContents);
                 if (!Lox.hadError) {
-                    lox.interpreter.interpretStatements(statementsToRun);
+                    // Run resolver first
+                    Resolver resolver = new Resolver(lox.interpreter);
+                    resolver.resolve(statements);
+                    
+                    if (!Lox.hadError) {
+                        // Then interpret
+                        lox.interpreter.interpretStatements(statements);
+                    }
                 }
                 break;
 
