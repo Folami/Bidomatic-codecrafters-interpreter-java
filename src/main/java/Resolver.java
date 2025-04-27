@@ -54,10 +54,9 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     */
     @Override
     public Void visitFunctionStmt(Stmt.Function stmt) {
-        // Declare the function name in the current scope before resolving its body.
+        // Declare and define the function name before resolving the body.
         declare(stmt.name);
         define(stmt.name);
-        // Save the previous function type and update the current one.
         FunctionType enclosingFunction = currentFunction;
         currentFunction = FunctionType.FUNCTION;
         resolveFunction(stmt, FunctionType.FUNCTION);
