@@ -44,13 +44,6 @@ public class Main {
                 }
                 break;
 
-            case "resolve":
-                List<Stmt> statementsToResolve = lox.runLox(fileContents);
-                if (!Lox.hadError) {
-                    lox.runResolver(statementsToResolve);
-                }
-                break;
-
             case "run":
                 List<Stmt> statements = lox.runLox(fileContents);
                 if (!Lox.hadError) {
