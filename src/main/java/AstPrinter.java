@@ -19,11 +19,10 @@ public class AstPrinter implements Expr.Visitor<String> {
     public String visitLiteralExpr(Expr.Literal expr) {
         if (expr.value == null) return "nil";
         if (expr.value instanceof Double) {
-            // Always format numbers with .0 for consistency
-            return String.format("%.1f", expr.value);
+            // Format numbers with exact precision
+            return String.valueOf(expr.value);
         }
         if (expr.value instanceof String) {
-            // String literals without quotes in AST
             return expr.value.toString();
         }
         return expr.value.toString();
@@ -49,31 +48,6 @@ public class AstPrinter implements Expr.Visitor<String> {
         return parenthesize(expr.operator.lexeme, expr.left, expr.right);
     }
 
-    @Override
-    public String visitCallExpr(Expr.Call expr) {
-        return parenthesize("call", expr.callee);
-    }
-
-    @Override
-    public String visitGetExpr(Expr.Get expr) {
-        return parenthesize(".", expr.object);
-    }
-
-    @Override
-    public String visitSetExpr(Expr.Set expr) {
-        return parenthesize("=", expr.object, expr.value);
-    }
-
-    @Override
-    public String visitThisExpr(Expr.This expr) {
-        return "this";
-    }
-    /* 
-    @Override
-    public String visitSuperExpr(Expr.Super expr) {
-        return "super." + expr.method.lexeme;
-    }
-    */
     private String parenthesize(String name, Expr... exprs) {
         StringBuilder builder = new StringBuilder();
         builder.append("(").append(name);
