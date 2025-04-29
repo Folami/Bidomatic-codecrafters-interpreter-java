@@ -205,13 +205,6 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         return null;
     }
 
-    @Override
-    public Void visitThisExpr(Expr.This expr) {
-        // Resolve "this" by looking up its variable in the environment.
-        resolveLocal(expr, expr.keyword);
-        return null;
-    }
-
     private void beginScope() {
         scopes.push(new HashMap<String, Boolean>());
     }
