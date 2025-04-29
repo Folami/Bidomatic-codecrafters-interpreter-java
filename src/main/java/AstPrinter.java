@@ -21,48 +21,19 @@ public class AstPrinter implements Expr.Visitor<String> {
     public String visitLiteralExpr(Expr.Literal expr) {
         if (expr.value == null) 
             return "nil";
-
+        if (expr.value instanceof Double) {
+            String text = expr.value.toString();
+            if (text.endsWith(".0")) {
+                text = text.substring(0, text.length() - 2);
+            }
+            return text;
+        }
         return expr.value.toString();
     }
 
     @Override
-    public String visitLogicalExpr(Expr.Logical expr) {
-        return parenthesize(expr.operator.lexeme, expr.left, expr.right);
-    }
-
-    @Override
     public String visitUnaryExpr(Expr.Unary expr) {
-        return parenthesize(expr.operator.lexeme, expr);
-    }
-
-    @Override
-    public String visitVariableExpr(Expr.Variable expr) {
-        return expr.name.lexeme;
-    }
-    
-    @Override
-    public String visitGetExpr(Expr.Get expr) {
-        return "";
-    }
-
-    @Override
-    public String visitSetExpr(Expr.Set expr) {
-        return "";
-    }
-    
-    @Override
-    public String visitThisExpr(Expr.This expr) {
-        return "";
-    }
-
-    @Override
-    public String visitAssignExpr(Expr.Assign expr) {
-        return parenthesize("assign " + expr.name.lexeme, expr.value);
-    }
-
-    @Override
-    public String visitCallExpr(Expr.Call expr) {
-        return parenthesize2("call", expr.callee, expr.arguments);
+        return parenthesize(expr.operator.lexeme, expr.right);
     }
 
     private String parenthesize(String name, Expr... exprs) {
@@ -74,28 +45,5 @@ public class AstPrinter implements Expr.Visitor<String> {
         }
         builder.append(")");
         return builder.toString();
-    }
-
-    private String parenthesize2(String name, Object... parts) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("(").append(name);
-        transform(builder, parts);
-        builder.append(")");
-        return builder.toString();
-    }
-
-    private void transform(StringBuilder builder, Object... parts) {
-        for (Object part : parts) {
-            builder.append(" ");
-            if (part instanceof Expr) {
-                builder.append(((Expr)part).accept(this));
-            } else if (part instanceof Token) {
-                builder.append(((Token) part).lexeme);
-            } else if (part instanceof List) {
-                transform(builder, ((List) part).toArray());
-            } else {
-                builder.append(part);
-            }
-        }
     }
 }
