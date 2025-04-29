@@ -2,7 +2,7 @@
 
 import java.util.List;
 
-class AstPrinter implements Expr.Visitor<String> {
+public class AstPrinter implements Expr.Visitor<String> {
     String print(Expr expr) {
         return expr.accept(this);
     }
@@ -32,7 +32,7 @@ class AstPrinter implements Expr.Visitor<String> {
 
     @Override
     public String visitUnaryExpr(Expr.Unary expr) {
-        return parenthesize(expr.operator.lexeme, expr.right);
+        return parenthesize(expr.operator.lexeme, expr);
     }
 
     @Override
