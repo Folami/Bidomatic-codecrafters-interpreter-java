@@ -52,14 +52,12 @@ class Parser {
 
     private Stmt declaration() {
         try {
-            if (match(TokenType.CLASS)) {
+            if (match(TokenType.CLASS)) 
                 return classDeclaration();
-            if (match(TokenType.FUN)) {
+            if (match(TokenType.FUN)) 
                 return function("function");
-            }
-            if (match(TokenType.VAR)) {
+            if (match(TokenType.VAR))
                 return varDeclaration();
-            }
             return statement();
         } catch (ParseError error) {
             synchronize();
