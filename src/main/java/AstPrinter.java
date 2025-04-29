@@ -1,5 +1,3 @@
-// package com.craftinginterpreters.lox;
-
 import java.util.List;
 
 public class AstPrinter implements Expr.Visitor<String> {
@@ -19,14 +17,14 @@ public class AstPrinter implements Expr.Visitor<String> {
 
     @Override
     public String visitLiteralExpr(Expr.Literal expr) {
-        if (expr.value == null) 
-            return "nil";
+        if (expr.value == null) return "nil";
         if (expr.value instanceof Double) {
-            String text = expr.value.toString();
-            if (text.endsWith(".0")) {
-                text = text.substring(0, text.length() - 2);
-            }
-            return text;
+            // Always format numbers with .0 for consistency
+            return String.format("%.1f", expr.value);
+        }
+        if (expr.value instanceof String) {
+            // String literals without quotes in AST
+            return expr.value.toString();
         }
         return expr.value.toString();
     }
@@ -41,7 +39,7 @@ public class AstPrinter implements Expr.Visitor<String> {
         return expr.name.lexeme;
     }
 
-    @Override
+    @Override 
     public String visitAssignExpr(Expr.Assign expr) {
         return parenthesize("=", new Expr.Variable(expr.name), expr.value);
     }
