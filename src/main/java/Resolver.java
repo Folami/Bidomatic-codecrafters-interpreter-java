@@ -190,17 +190,6 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     }
 
     @Override
-    public Object visitSetExpr(Expr.Set expr) {
-        Object object = evaluate(expr.object);
-        if (!(object instanceof LoxInstance)) { 
-            throw new RuntimeError(expr.name, "Only instances have fields.");
-        }
-        Object value = evaluate(expr.value);
-        ((LoxInstance)object).set(expr.name, value);
-        return value;
-    }
-
-    @Override
     public Void visitThisExpr(Expr.This expr) {
         if (currentClass == ClassType.NONE) {
             Lox.error(expr.keyword, "Can't use 'this' outside of a class.");
