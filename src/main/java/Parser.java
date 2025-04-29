@@ -52,7 +52,7 @@ class Parser {
 
     private Stmt declaration() {
         try {
-            if (match(CLASS)) 
+            if (match(TokenType.CLASS)) {
                 return classDeclaration();
             if (match(TokenType.FUN)) {
                 return function("function");
@@ -78,13 +78,13 @@ class Parser {
     }
 
     private Stmt classDeclaration() {
-        Token name = consume(IDENTIFIER, "Expect class name.");
-        consume(LEFT_BRACE, "Expect '{' before class body.");
+        Token name = consume(TokenType.IDENTIFIER, "Expect class name.");
+        consume(TokenType.LEFT_BRACE, "Expect '{' before class body.");
         List<Stmt.Function> methods = new ArrayList<>();
-        while (!check(RIGHT_BRACE) && !isAtEnd()) {
+        while (!check(TokenType.RIGHT_BRACE) && !isAtEnd()) {
             methods.add(function("method"));
         }
-        consume(RIGHT_BRACE, "Expect '}' after class body.");
+        consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.");
         return new Stmt.Class(name, methods);
     }
 
