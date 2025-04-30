@@ -19,8 +19,13 @@ public class AstPrinter implements Expr.Visitor<String> {
     public String visitLiteralExpr(Expr.Literal expr) {
         if (expr.value == null) return "nil";
         if (expr.value instanceof Double) {
-            // Always format numbers with .0 for consistency
-            return String.format("%.1f", expr.value);
+            double d = (Double) expr.value;
+            // If the number is whole, format with one decimal place; otherwise preserve full precision.
+            if (d == Math.floor(d)) {
+                return String.format("%.1f", d);
+            } else {
+                return Double.toString(d);
+            }
         }
         if (expr.value instanceof String) {
             // String literals without quotes in AST
