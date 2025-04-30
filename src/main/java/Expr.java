@@ -12,7 +12,7 @@ abstract class Expr {
         R visitLiteralExpr(Literal expr);
         R visitLogicalExpr(Logical expr);
         R visitSetExpr(Set expr);
-        // R visitSuperExpr(Super expr);
+        R visitSuperExpr(Super expr);
         R visitThisExpr(This expr);
         R visitUnaryExpr(Unary expr);
         R visitVariableExpr(Variable expr);
