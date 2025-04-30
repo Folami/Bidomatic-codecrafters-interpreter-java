@@ -186,8 +186,8 @@ abstract class Expr {
         final Token name;
         final Expr value;
     }
-    /* 
-    //> expr-super
+    
+    //>
     static class Super extends Expr {
         Super(Token keyword, Token method) {
             this.keyword = keyword;
@@ -202,7 +202,7 @@ abstract class Expr {
         final Token keyword;
         final Token method;
     }
-    */
+    
     //> expr-this
     static class This extends Expr {
         This(Token keyword) {
