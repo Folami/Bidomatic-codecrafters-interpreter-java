@@ -92,19 +92,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         resolveFunction(stmt, FunctionType.FUNCTION);
         return null;
     }
-    /*
-    @Override
-    public Void visitFunctionStmt(Stmt.Function stmt) {
-        // Declare and define the function name before resolving the body.
-        declare(stmt.name);
-        define(stmt.name);
-        FunctionType enclosingFunction = currentFunction;
-        currentFunction = FunctionType.FUNCTION;
-        resolveFunction(stmt, FunctionType.FUNCTION);
-        currentFunction = enclosingFunction;
-        return null;
-    }
-    */
+    
     @Override
     public Void visitExpressionStmt(Stmt.Expression stmt) {
         resolve(stmt.expression);
